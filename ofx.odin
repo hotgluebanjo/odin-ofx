@@ -711,18 +711,16 @@ OfxThreadFunctionV1 :: proc(threadIndex: u32, threadMax: u32, customArg: rawptr)
 
 OfxMultiThreadSuiteV1 :: struct {
     multiThread: proc(func: OfxThreadFunctionV1, nThreads: u32, customArg: rawptr) -> OfxStatus,
-
     multiThreadNumCPUs: proc(nCPUs: ^u32) -> OfxStatus,
 
     multiThreadIndex: proc(threadIndex: ^u32) -> OfxStatus,
     multiThreadIsSpawnedThread: proc() -> i32,
 
-    mutexCreate: proc(mutex: ^OfxMutexHandle, lockCount: i32) -> OfxStatus,
-    mutexDestroy: proc(mutex: OfxMutexHandle) -> OfxStatus,
-    mutexLock: proc(mutex: OfxMutexHandle) -> OfxStatus,
-    mutexUnLock: proc(mutex: OfxMutexHandle) -> OfxStatus,
-
-    mutexTryLock: proc(mutex: OfxMutexHandle) -> OfxStatus,
+    mutexCreate:    proc(mutex: ^OfxMutexHandle, lockCount: i32) -> OfxStatus,
+    mutexDestroy:   proc(mutex: OfxMutexHandle) -> OfxStatus,
+    mutexLock:      proc(mutex: OfxMutexHandle) -> OfxStatus,
+    mutexUnLock:    proc(mutex: OfxMutexHandle) -> OfxStatus,
+    mutexTryLock:   proc(mutex: OfxMutexHandle) -> OfxStatus,
 }
 
 // Old
@@ -881,24 +879,31 @@ kOfxParamPropInterpolationAmount            : cstring : "OfxParamPropInterpolati
 OfxCustomParamInterpFuncV1 :: proc(instance: OfxParamSetHandle, inArgs: OfxPropertySetHandle, outArgs: OfxPropertySetHandle) -> OfxStatus
 
 OfxParameterSuiteV1 :: struct {
-    paramDefine: proc(paramSet: OfxParamSetHandle, paramType: cstring, name: cstring, propertySet: ^OfxPropertySetHandle) -> OfxStatus,
-    paramGetHandle: proc(paramSet: OfxParamSetHandle, name: cstring, param: ^OfxParamHandle, propertySet: ^OfxPropertySetHandle) -> OfxStatus,
+    paramDefine:            proc(paramSet: OfxParamSetHandle, paramType: cstring, name: cstring, propertySet: ^OfxPropertySetHandle) -> OfxStatus,
+    paramGetHandle:         proc(paramSet: OfxParamSetHandle, name: cstring, param: ^OfxParamHandle, propertySet: ^OfxPropertySetHandle) -> OfxStatus,
     paramSetGetPropertySet: proc(paramSet: OfxParamSetHandle, propHandle: ^OfxPropertySetHandle) -> OfxStatus,
-    paramGetPropertySet: proc(param: OfxParamHandle, propHandle: ^OfxPropertySetHandle) -> OfxStatus,
-    paramGetValue: proc "c" (paramHandle: OfxParamHandle, #c_vararg args: ..any) -> OfxStatus,
-    paramGetValueAtTime: proc "c" (paramHandle: OfxParamHandle, time: OfxTime, #c_vararg args: ..any) -> OfxStatus,
-    paramGetDerivative: proc "c" (paramHandle: OfxParamHandle, time: OfxTime, #c_vararg args: ..any) -> OfxStatus,
-    paramGetIntegral: proc "c" (paramHandle: OfxParamHandle, time1: OfxTime, time2: OfxTime, #c_vararg args: ..any) -> OfxStatus,
-    paramSetValue: proc "c" (paramHandle: OfxParamHandle, #c_vararg args: ..any) -> OfxStatus,
-    paramSetValueAtTime: proc "c" (paramHandle: OfxParamHandle, time: OfxTime, #c_vararg args: ..any) -> OfxStatus,
-    paramGetNumKeys: proc(paramHandle: OfxParamHandle, numberOfKeys: ^u32) -> OfxStatus,
-    paramGetKeyTime: proc(paramHandle: OfxParamHandle, nthKey: u32, time: ^OfxTime) -> OfxStatus,
-    paramGetKeyIndex: proc(paramHandle: OfxParamHandle, time: OfxTime, direction: i32, index: ^i32) -> OfxStatus,
-    paramDeleteKey: proc(paramHandle: OfxParamHandle, time: OfxTime) -> OfxStatus,
-    paramDeleteAllKeys: proc(paramHandle: OfxParamHandle) -> OfxStatus,
-    paramCopy: proc(paramTo: OfxParamHandle, paramFrom: OfxParamHandle, dstOffset: OfxTime, frameRange: ^OfxRangeD) -> OfxStatus,
-    paramEditBegin: proc(paramSet: OfxParamSetHandle, name: cstring) -> OfxStatus,
-    paramEditEnd: proc(paramSet: OfxParamSetHandle) -> OfxStatus,
+
+    paramGetPropertySet:    proc(param: OfxParamHandle, propHandle: ^OfxPropertySetHandle) -> OfxStatus,
+
+    paramGetValue:          proc "c" (paramHandle: OfxParamHandle, #c_vararg args: ..any) -> OfxStatus,
+    paramGetValueAtTime:    proc "c" (paramHandle: OfxParamHandle, time: OfxTime, #c_vararg args: ..any) -> OfxStatus,
+    paramGetDerivative:     proc "c" (paramHandle: OfxParamHandle, time: OfxTime, #c_vararg args: ..any) -> OfxStatus,
+    paramGetIntegral:       proc "c" (paramHandle: OfxParamHandle, time1: OfxTime, time2: OfxTime, #c_vararg args: ..any) -> OfxStatus,
+
+    paramSetValue:          proc "c" (paramHandle: OfxParamHandle, #c_vararg args: ..any) -> OfxStatus,
+    paramSetValueAtTime:    proc "c" (paramHandle: OfxParamHandle, time: OfxTime, #c_vararg args: ..any) -> OfxStatus,
+
+    paramGetNumKeys:        proc(paramHandle: OfxParamHandle, numberOfKeys: ^u32) -> OfxStatus,
+    paramGetKeyTime:        proc(paramHandle: OfxParamHandle, nthKey: u32, time: ^OfxTime) -> OfxStatus,
+    paramGetKeyIndex:       proc(paramHandle: OfxParamHandle, time: OfxTime, direction: i32, index: ^i32) -> OfxStatus,
+
+    paramDeleteKey:         proc(paramHandle: OfxParamHandle, time: OfxTime) -> OfxStatus,
+    paramDeleteAllKeys:     proc(paramHandle: OfxParamHandle) -> OfxStatus,
+
+    paramCopy:              proc(paramTo: OfxParamHandle, paramFrom: OfxParamHandle, dstOffset: OfxTime, frameRange: ^OfxRangeD) -> OfxStatus,
+
+    paramEditBegin:         proc(paramSet: OfxParamSetHandle, name: cstring) -> OfxStatus,
+    paramEditEnd:           proc(paramSet: OfxParamSetHandle) -> OfxStatus,
 }
 
 // Parametric Param
@@ -912,13 +917,16 @@ kOfxParamHostPropSupportsParametricAnimation    : cstring : "OfxParamHostPropSup
 kOfxParamPropParametricRange                    : cstring : "OfxParamPropParametricRange"
 
 OfxParametricParameterSuiteV1 :: struct {
-    parametricParamGetValue: proc(param: OfxParamHandle, curveIndex: i32, time: OfxTime, parametricPosition: f64, returnValue: ^f64) -> OfxStatus,
-    parametricParamGetNControlPoints: proc(param: OfxParamHandle, curveIndex: i32, time: f64, returnValue: ^i32) -> OfxStatus,
-    parametricParamGetNthControlPoint: proc(param: OfxParamHandle, curveIndex: i32, time: f64, nthCtl: i32, key: ^f64, value: ^f64) -> OfxStatus,
-    parametricParamSetNthControlPoint: proc(param: OfxParamHandle, curveIndex: i32, time: f64, nthCtl: i32, key: f64, value: f64, addAnimationKey: bool) -> OfxStatus,
-    parametricParamAddControlPoint: proc(param: OfxParamHandle, curveIndex: i32, time: f64, key: f64, value: f64, addAnimationKey: bool) -> OfxStatus,
-    parametricParamDeleteControlPoint: proc(param: OfxParamHandle, curveIndex: i32, nthCtl: i32) -> OfxStatus,
-    parametricParamDeleteAllControlPoints: proc(param: OfxParamHandle, curveIndex: i32) -> OfxStatus,
+    parametricParamGetValue:                proc(param: OfxParamHandle, curveIndex: i32, time: OfxTime, parametricPosition: f64, returnValue: ^f64) -> OfxStatus,
+    parametricParamGetNControlPoints:       proc(param: OfxParamHandle, curveIndex: i32, time: f64, returnValue: ^i32) -> OfxStatus,
+    parametricParamGetNthControlPoint:      proc(param: OfxParamHandle, curveIndex: i32, time: f64, nthCtl: i32, key: ^f64, value: ^f64) -> OfxStatus,
+
+    parametricParamSetNthControlPoint:      proc(param: OfxParamHandle, curveIndex: i32, time: f64, nthCtl: i32, key: f64, value: f64, addAnimationKey: bool) -> OfxStatus,
+
+    parametricParamAddControlPoint:         proc(param: OfxParamHandle, curveIndex: i32, time: f64, key: f64, value: f64, addAnimationKey: bool) -> OfxStatus,
+
+    parametricParamDeleteControlPoint:      proc(param: OfxParamHandle, curveIndex: i32, nthCtl: i32) -> OfxStatus,
+    parametricParamDeleteAllControlPoints:  proc(param: OfxParamHandle, curveIndex: i32) -> OfxStatus,
 }
 
 // Pixels
@@ -960,15 +968,15 @@ OfxRGBColourD :: struct {
 kOfxProgressSuite : cstring : "OfxProgressSuite"
 
 OfxProgressSuiteV1 :: struct {
-    progressStart: proc(effectInstance: rawptr, label: cstring) -> OfxStatus,
+    progressStart:  proc(effectInstance: rawptr, label: cstring) -> OfxStatus,
     progressUpdate: proc(effectInstance: rawptr, progress: f64) -> OfxStatus,
-    progressEnd: proc(effectInstance: rawptr) -> OfxStatus,
+    progressEnd:    proc(effectInstance: rawptr) -> OfxStatus,
 }
 
 OfxProgressSuiteV2 :: struct {
-    progressStart: proc(effectInstance: rawptr, message: cstring, messageid: cstring) -> OfxStatus,
+    progressStart:  proc(effectInstance: rawptr, message: cstring, messageid: cstring) -> OfxStatus,
     progressUpdate: proc(effectInstance: rawptr, progress: f64) -> OfxStatus,
-    progressEnd: proc(effectInstance: rawptr) -> OfxStatus,
+    progressEnd:    proc(effectInstance: rawptr) -> OfxStatus,
 }
 
 // Property
@@ -980,18 +988,22 @@ OfxPropertySuiteV1 :: struct {
     propSetString:      proc(properties: OfxPropertySetHandle, property: cstring, index: i32, value: cstring) -> OfxStatus,
     propSetDouble:      proc(properties: OfxPropertySetHandle, property: cstring, index: i32, value: f64) -> OfxStatus,
     propSetInt:         proc(properties: OfxPropertySetHandle, property: cstring, index: i32, value: i32) -> OfxStatus,
+
     propSetPointerN:    proc(properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^rawptr) -> OfxStatus,
     propSetStringN:     proc(properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^cstring) -> OfxStatus,
     propSetDoubleN:     proc(properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^f64) -> OfxStatus,
     propSetIntN:        proc(properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^i32) -> OfxStatus,
+
     propGetPointer:     proc(properties: OfxPropertySetHandle, property: cstring, index: i32, value: ^rawptr) -> OfxStatus,
     propGetString:      proc(properties: OfxPropertySetHandle, property: cstring, index: i32, value: ^cstring) -> OfxStatus,
     propGetDouble:      proc(properties: OfxPropertySetHandle, property: cstring, index: i32, value: ^f64) -> OfxStatus,
     propGetInt:         proc(properties: OfxPropertySetHandle, property: cstring, index: i32, value: ^i32) -> OfxStatus,
+
     propGetPointerN:    proc(properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^rawptr) -> OfxStatus,
     propGetStringN:     proc(properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^cstring) -> OfxStatus,
     propGetDoubleN:     proc(properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^f64) -> OfxStatus,
     propGetIntN:        proc(properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^i32) -> OfxStatus,
+
     propReset:          proc(properties: OfxPropertySetHandle, property: cstring) -> OfxStatus,
     propGetDimension:   proc(properties: OfxPropertySetHandle, property: cstring, count: ^i32) -> OfxStatus,
 }
@@ -1001,7 +1013,7 @@ OfxPropertySuiteV1 :: struct {
 kOfxTimeLineSuite : cstring : "OfxTimeLineSuite"
 
 OfxTimeLineSuiteV1 :: struct {
-    getTime: proc(instance: rawptr, time: ^f64) -> OfxStatus,
-    gotoTime: proc(instance: rawptr, time: f64) -> OfxStatus,
+    getTime:       proc(instance: rawptr, time: ^f64) -> OfxStatus,
+    gotoTime:      proc(instance: rawptr, time: f64) -> OfxStatus,
     getTimeBounds: proc(instance: rawptr, firstTime: ^f64, lastTime: ^f64) -> OfxStatus,
 }
