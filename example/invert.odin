@@ -17,7 +17,7 @@ load :: proc() -> ofx.OfxStatus {
     }
 
     effect = cast(^ofx.OfxImageEffectSuiteV1) host.fetchSuite(host.host, ofx.kOfxImageEffectSuite, 1)
-    prop =   cast(^ofx.OfxPropertySuiteV1)    host.fetchSuite(host.host, ofx.kOfxPropertySuite,    1)
+    prop   = cast(^ofx.OfxPropertySuiteV1)    host.fetchSuite(host.host, ofx.kOfxPropertySuite,    1)
 
     if effect == nil || prop == nil {
         return ofx.kOfxStatErrMissingHostFeature
@@ -76,28 +76,23 @@ plugin_main :: proc(
     in_args: ofx.OfxPropertySetHandle,
     out_args: ofx.OfxPropertySetHandle
 ) -> ofx.OfxStatus {
-    effect := ofx.OfxImageEffectHandle(handle);
+    descriptor := ofx.OfxImageEffectHandle(handle);
 
-    if (action == ofx.kOfxActionLoad) {
+    switch action {
+    case ofx.kOfxActionLoad:
         return load();
-    }
-    if (action == ofx.kOfxActionUnload) {
+    case ofx.kOfxActionUnload:
         return unload();
-    }
-    if (action == ofx.kOfxActionDescribe) {
-        return describe(effect);
-    }
-    if (action == ofx.kOfxImageEffectActionDescribeInContext) {
-        return describe_in_context(effect);
-    }
-    if (action == ofx.kOfxActionCreateInstance) {
+    case ofx.kOfxActionDescribe:
+        return describe(descriptor);
+    case ofx.kOfxImageEffectActionDescribeInContext:
+        return describe_in_context(descriptor);
+    case ofx.kOfxActionCreateInstance:
         return create_instance();
-    }
-    if (action == ofx.kOfxActionDestroyInstance) {
+    case ofx.kOfxActionDestroyInstance:
         return destroy_instance();
-    }
-    if (action == ofx.kOfxImageEffectActionRender) {
-        // return render(effect, in_args);
+    case ofx.kOfxImageEffectActionRender:
+        // return render(descriptor, in_args);
         return ofx.kOfxStatOK;
     }
 
