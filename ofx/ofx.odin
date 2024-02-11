@@ -11,7 +11,7 @@ OfxStatus :: i32
 
 OfxHost :: struct {
     host: OfxPropertySetHandle,
-    fetchSuite: proc "c" (host: OfxPropertySetHandle, suiteName: cstring, suiteVersion: i32) -> rawptr,
+    fetchSuite: proc(host: OfxPropertySetHandle, suiteName: cstring, suiteVersion: i32) -> rawptr,
 }
 
 OfxPluginEntryPoint :: proc(action: cstring, handle: rawptr, inArgs: OfxPropertySetHandle, outArgs: OfxPropertySetHandle) -> OfxStatus
@@ -40,13 +40,13 @@ kOfxActionBeginInstanceEdit     : cstring : "OfxActionBeginInstanceEdit"
 kOfxActionEndInstanceEdit       : cstring : "OfxActionEndInstanceEdit"
 
 // May not be needed.
-foreign {
-    // @export
-    OfxGetPlugin :: proc(nth: i32) -> ^OfxPlugin ---
+// foreign {
+//     // @export
+//     OfxGetPlugin :: proc(nth: i32) -> ^OfxPlugin ---
 
-    // @export
-    OfxGetNumberOfPlugins :: proc() -> i32 ---
-}
+//     // @export
+//     OfxGetNumberOfPlugins :: proc() -> i32 ---
+// }
 
 kOfxPropAPIVersion          : cstring : "OfxPropAPIVersion"
 kOfxPropTime                : cstring : "OfxPropTime"
@@ -122,7 +122,7 @@ kOfxStatReplyDefault            : i32 : 14
 
 // Dialog
 
-kOfxDialogSuite : cstring :  "OfxDialogSuite"
+kOfxDialogSuite  : cstring : "OfxDialogSuite"
 kOfxActionDialog : cstring : "OfxActionDialog"
 
 OfxDialogSuiteV1 :: struct {
@@ -255,13 +255,16 @@ kOfxImageEffectSuite                                : cstring : "OfxImageEffectS
 OfxImageEffectSuiteV1 :: struct {
     getPropertySet:             proc(imageEffect: OfxImageEffectHandle, propHandle: ^OfxPropertySetHandle) -> OfxStatus,
     getParamSet:                proc(imageEffect: OfxImageEffectHandle, paramSet: ^OfxParamSetHandle) -> OfxStatus,
+
     clipDefine:                 proc(imageEffect: OfxImageEffectHandle, name: cstring, propertySet: ^OfxPropertySetHandle) -> OfxStatus,
     clipGetHandle:              proc(imageEffect: OfxImageEffectHandle, name: cstring, clip: ^OfxImageClipHandle, propertySet: ^OfxPropertySetHandle) -> OfxStatus,
     clipGetPropertySet:         proc(clip: OfxImageClipHandle, propHandle: ^OfxPropertySetHandle) -> OfxStatus,
     clipGetImage:               proc(clip: OfxImageClipHandle, time: OfxTime, region: ^OfxRectD, imageHandle: ^OfxPropertySetHandle) -> OfxStatus,
     clipReleaseImage:           proc(imageHandle: OfxPropertySetHandle) -> OfxStatus,
     clipGetRegionOfDefinition:  proc(clip: OfxImageClipHandle, time: OfxTime, bounds: ^OfxRectD) -> OfxStatus,
+
     abort:                      proc(imageEffect: OfxImageEffectHandle) -> i32,
+
     imageMemoryAlloc:           proc(instanceHandle: OfxImageEffectHandle, nBytes: uint, memoryHandle: ^OfxImageMemoryHandle) -> OfxStatus,
     imageMemoryFree:            proc(memoryHandle: OfxImageMemoryHandle) -> OfxStatus,
     imageMemoryLock:            proc(memoryHandle: OfxImageMemoryHandle, returnedPtr: ^rawptr) -> OfxStatus,
