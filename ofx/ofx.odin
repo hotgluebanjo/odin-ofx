@@ -39,15 +39,6 @@ kOfxActionEndInstanceChanged    : cstring : "OfxActionEndInstanceChanged"
 kOfxActionBeginInstanceEdit     : cstring : "OfxActionBeginInstanceEdit"
 kOfxActionEndInstanceEdit       : cstring : "OfxActionEndInstanceEdit"
 
-// May not be needed.
-// foreign {
-//     // @export
-//     OfxGetPlugin :: proc(nth: i32) -> ^OfxPlugin ---
-
-//     // @export
-//     OfxGetNumberOfPlugins :: proc() -> i32 ---
-// }
-
 kOfxPropAPIVersion          : cstring : "OfxPropAPIVersion"
 kOfxPropTime                : cstring : "OfxPropTime"
 kOfxPropIsInteractive       : cstring : "OfxPropIsInteractive"
