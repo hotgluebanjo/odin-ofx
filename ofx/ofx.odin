@@ -114,6 +114,7 @@ kOfxStatReplyDefault            : i32 : 14
 // Dialog
 
 kOfxDialogSuite  : cstring : "OfxDialogSuite"
+
 kOfxActionDialog : cstring : "OfxActionDialog"
 
 OfxDialogSuiteV1 :: struct {
