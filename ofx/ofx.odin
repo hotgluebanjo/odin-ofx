@@ -855,6 +855,7 @@ kOfxParamDoubleTypeNormalisedXYAbsolute : cstring :  "OfxParamDoubleTypeNormalis
 // Param
 
 kOfxParameterSuite          : cstring : "OfxParameterSuite"
+
 kOfxTypeParameter           : cstring : "OfxTypeParameter"
 kOfxTypeParameterInstance   : cstring : "OfxTypeParameterInstance"
 
@@ -992,6 +993,7 @@ OfxParameterSuiteV1 :: struct {
 kOfxParametricParameterSuite                    : cstring : "OfxParametricParameterSuite"
 
 kOfxParamTypeParametric                         : cstring : "OfxParamTypeParametric"
+
 kOfxParamPropParametricDimension                : cstring : "OfxParamPropParametricDimension"
 kOfxParamPropParametricUIColour                 : cstring : "OfxParamPropParametricUIColour"
 kOfxParamPropParametricInteractBackground       : cstring : "OfxParamPropParametricInteractBackground"
