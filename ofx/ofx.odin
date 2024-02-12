@@ -117,9 +117,107 @@ kOfxDialogSuite  : cstring : "OfxDialogSuite"
 kOfxActionDialog : cstring : "OfxActionDialog"
 
 OfxDialogSuiteV1 :: struct {
-    RequestDialog: proc "c" (user_data: rawptr) -> OfxStatus,
-    NotifyRedrawPending: proc "c" () -> OfxStatus,
+    RequestDialog: proc(user_data: rawptr) -> OfxStatus,
+    NotifyRedrawPending: proc() -> OfxStatus,
 }
+
+// Draw
+
+kOfxDrawSuite : cstring : "OfxDrawSuite"
+
+OfxDrawContext :: struct {}
+OfxDrawContextHandle :: ^OfxDrawContext
+
+kOfxInteractPropDrawContext : cstring : "OfxInteractPropDrawContext"
+
+OfxStandardColour :: enum i32 {
+    kOfxStandardColourOverlayBackground,
+    kOfxStandardColourOverlayActive,
+    kOfxStandardColourOverlaySelected,
+    kOfxStandardColourOverlayDeselected,
+    kOfxStandardColourOverlayMarqueeFG,
+    kOfxStandardColourOverlayMarqueeBG,
+    kOfxStandardColourOverlayText,
+}
+
+OfxDrawLineStipplePattern :: enum i32 {
+    kOfxDrawLineStipplePatternSolid,
+    kOfxDrawLineStipplePatternDot,
+    kOfxDrawLineStipplePatternDash,
+    kOfxDrawLineStipplePatternAltDash,
+    kOfxDrawLineStipplePatternDotDash,
+}
+
+OfxDrawPrimitive :: enum i32 {
+    kOfxDrawPrimitiveLines,
+    kOfxDrawPrimitiveLineStrip,
+    kOfxDrawPrimitiveLineLoop,
+    kOfxDrawPrimitiveRectangle,
+    kOfxDrawPrimitivePolygon,
+    kOfxDrawPrimitiveEllipse
+}
+
+OfxDrawTextAlignment :: enum i32 {
+    kOfxDrawTextAlignmentLeft     = 0x0001,
+    kOfxDrawTextAlignmentRight    = 0x0002,
+    kOfxDrawTextAlignmentTop      = 0x0004,
+    kOfxDrawTextAlignmentBottom   = 0x0008,
+    kOfxDrawTextAlignmentBaseline = 0x0010,
+    kOfxDrawTextAlignmentCenterH  = (kOfxDrawTextAlignmentLeft | kOfxDrawTextAlignmentRight),
+    kOfxDrawTextAlignmentCenterV  = (kOfxDrawTextAlignmentTop | kOfxDrawTextAlignmentBaseline),
+}
+
+// TODO
+OfxDrawSuiteV1 :: struct {
+    getColour: proc(context_: OfxDrawContextHandle, std_colour: OfxStandardColour, colour: ^OfxRGBAColourF) -> OfxStatus,
+
+    setColour: proc(context_: OfxDrawContextHandle, colour: ^OfxRGBAColourF) -> OfxStatus,
+
+    setLineWidth: proc(context_: OfxDrawContextHandle, width: f32) -> OfxStatus,
+
+    setLineStipple: proc(context_: OfxDrawContextHandle, pattern: OfxDrawLineStipplePattern) -> OfxStatus,
+
+    draw: proc(context_: OfxDrawContextHandle, primitive: OfxDrawPrimitive, points: ^OfxPointD, point_count: i32) -> OfxStatus,
+
+    drawText: proc(context_: OfxDrawContextHandle, text: cstring, pos: ^OfxPointD, alignment: i32) -> OfxStatus,
+}
+
+// GPU Render
+
+kOfxOpenGLRenderSuite : cstring : "OfxImageEffectOpenGLRenderSuite"
+
+kOfxImageEffectPropOpenGLRenderSupported    : cstring : "OfxImageEffectPropOpenGLRenderSupported"
+kOfxOpenGLPropPixelDepth                    : cstring : "OfxOpenGLPropPixelDepth"
+kOfxImageEffectPropOpenGLEnabled            : cstring : "OfxImageEffectPropOpenGLEnabled"
+kOfxImageEffectPropOpenGLTextureIndex       : cstring : "OfxImageEffectPropOpenGLTextureIndex"
+kOfxImageEffectPropOpenGLTextureTarget      : cstring : "OfxImageEffectPropOpenGLTextureTarget"
+
+kOfxStatGPUOutOfMemory  : i32 : 1001
+kOfxStatGLOutOfMemory   : i32 : 1001
+kOfxStatGPURenderFailed : i32 : 1002
+kOfxStatGLRenderFailed  : i32 : 1002
+
+OfxImageEffectOpenGLRenderSuiteV1 :: struct {
+    clipLoadTexture: proc(clip: OfxImageClipHandle, time: OfxTime, format: cstring, region: ^OfxRectD, textureHandle: ^OfxPropertySetHandle) -> OfxStatus,
+    clipFreeTexture: proc(textureHandle: OfxPropertySetHandle) -> OfxStatus,
+    flushResources: proc() -> OfxStatus,
+}
+
+kOfxActionOpenGLContextAttached : cstring : "OfxActionOpenGLContextAttached"
+kOfxActionOpenGLContextDetached : cstring : "kOfxActionOpenGLContextDetached"
+
+kOfxImageEffectPropCudaRenderSupported   : cstring : "OfxImageEffectPropCudaRenderSupported"
+kOfxImageEffectPropCudaEnabled           : cstring : "OfxImageEffectPropCudaEnabled"
+kOfxImageEffectPropCudaStreamSupported   : cstring : "OfxImageEffectPropCudaStreamSupported"
+kOfxImageEffectPropCudaStream            : cstring : "OfxImageEffectPropCudaStream"
+
+kOfxImageEffectPropMetalRenderSupported  : cstring : "OfxImageEffectPropMetalRenderSupported"
+kOfxImageEffectPropMetalEnabled          : cstring : "OfxImageEffectPropMetalEnabled"
+kOfxImageEffectPropMetalCommandQueue     : cstring : "OfxImageEffectPropMetalCommandQueue"
+
+kOfxImageEffectPropOpenCLRenderSupported : cstring : "OfxImageEffectPropOpenCLRenderSupported"
+kOfxImageEffectPropOpenCLEnabled         : cstring : "OfxImageEffectPropOpenCLEnabled"
+kOfxImageEffectPropOpenCLCommandQueue    : cstring : "OfxImageEffectPropOpenCLCommandQueue"
 
 // Image Effect
 
@@ -139,17 +237,20 @@ kOfxImageComponentNone                              : cstring : "OfxImageCompone
 kOfxImageComponentRGBA                              : cstring : "OfxImageComponentRGBA"
 kOfxImageComponentRGB                               : cstring : "OfxImageComponentRGB"
 kOfxImageComponentAlpha                             : cstring : "OfxImageComponentAlpha"
+
 kOfxImageEffectContextGenerator                     : cstring : "OfxImageEffectContextGenerator"
 kOfxImageEffectContextFilter                        : cstring : "OfxImageEffectContextFilter"
 kOfxImageEffectContextTransition                    : cstring : "OfxImageEffectContextTransition"
 kOfxImageEffectContextPaint                         : cstring : "OfxImageEffectContextPaint"
 kOfxImageEffectContextGeneral                       : cstring : "OfxImageEffectContextGeneral"
 kOfxImageEffectContextRetimer                       : cstring : "OfxImageEffectContextRetimer"
+
 kOfxTypeImageEffectHost                             : cstring : "OfxTypeImageEffectHost"
 kOfxTypeImageEffect                                 : cstring : "OfxTypeImageEffect"
 kOfxTypeImageEffectInstance                         : cstring : "OfxTypeImageEffectInstance"
 kOfxTypeClip                                        : cstring : "OfxTypeClip"
 kOfxTypeImage                                       : cstring : "OfxTypeImage"
+
 kOfxImageEffectActionGetRegionOfDefinition          : cstring : "OfxImageEffectActionGetRegionOfDefinition"
 kOfxImageEffectActionGetRegionsOfInterest           : cstring : "OfxImageEffectActionGetRegionsOfInterest"
 kOfxImageEffectActionGetTimeDomain                  : cstring : "OfxImageEffectActionGetTimeDomain"
@@ -160,6 +261,7 @@ kOfxImageEffectActionRender                         : cstring : "OfxImageEffectA
 kOfxImageEffectActionBeginSequenceRender            : cstring : "OfxImageEffectActionBeginSequenceRender"
 kOfxImageEffectActionEndSequenceRender              : cstring : "OfxImageEffectActionEndSequenceRender"
 kOfxImageEffectActionDescribeInContext              : cstring : "OfxImageEffectActionDescribeInContext"
+
 kOfxImageEffectPropSupportedContexts                : cstring : "OfxImageEffectPropSupportedContexts"
 kOfxImageEffectPropPluginHandle                     : cstring : "OfxImageEffectPropPluginHandle"
 kOfxImageEffectHostPropIsBackground                 : cstring : "OfxImageEffectHostPropIsBackground"
@@ -176,14 +278,15 @@ kOfxImageEffectPropSetableFrameRate                 : cstring : "OfxImageEffectP
 kOfxImageEffectPropSetableFielding                  : cstring : "OfxImageEffectPropSetableFielding"
 kOfxImageEffectInstancePropSequentialRender         : cstring : "OfxImageEffectInstancePropSequentialRender"
 kOfxImageEffectPropSequentialRenderStatus           : cstring : "OfxImageEffectPropSequentialRenderStatus"
-kOfxHostNativeOriginBottomLeft                      : cstring : "kOfxImageEffectHostPropNativeOriginBottomLeft"
-kOfxHostNativeOriginTopLeft                         : cstring : "kOfxImageEffectHostPropNativeOriginTopLeft"
-kOfxHostNativeOriginCenter                          : cstring : "kOfxImageEffectHostPropNativeOriginCenter"
+kOfxHostNativeOriginBottomLeft                      : cstring : "kOfxImageEffectHostPropNativeOriginBottomLeft"  
+kOfxHostNativeOriginTopLeft                         : cstring : "kOfxImageEffectHostPropNativeOriginTopLeft"  
+kOfxHostNativeOriginCenter                          : cstring : "kOfxImageEffectHostPropNativeOriginCenter"  
 kOfxImageEffectHostPropNativeOrigin                 : cstring : "OfxImageEffectHostPropNativeOrigin"
 kOfxImageEffectPropInteractiveRenderStatus          : cstring : "OfxImageEffectPropInteractiveRenderStatus"
 kOfxImageEffectPluginPropGrouping                   : cstring : "OfxImageEffectPluginPropGrouping"
 kOfxImageEffectPropSupportsOverlays                 : cstring : "OfxImageEffectPropSupportsOverlays"
 kOfxImageEffectPluginPropOverlayInteractV1          : cstring : "OfxImageEffectPluginPropOverlayInteractV1"
+kOfxImageEffectPluginPropOverlayInteractV2          : cstring : "OfxImageEffectPluginPropOverlayInteractV2"
 kOfxImageEffectPropSupportsMultiResolution          : cstring : "OfxImageEffectPropSupportsMultiResolution"
 kOfxImageEffectPropSupportsTiles                    : cstring : "OfxImageEffectPropSupportsTiles"
 kOfxImageEffectPropTemporalClipAccess               : cstring : "OfxImageEffectPropTemporalClipAccess"
@@ -280,6 +383,10 @@ kOfxInteractPropPenViewportPosition     : cstring : "OfxInteractPropPenViewportP
 kOfxInteractPropPenPressure             : cstring : "OfxInteractPropPenPressure"
 kOfxInteractPropBitDepth                : cstring : "OfxInteractPropBitDepth"
 kOfxInteractPropHasAlpha                : cstring : "OfxInteractPropHasAlpha"
+
+kOfxActionDescribeInteract              :: kOfxActionDescribe
+kOfxActionCreateInstanceInteract        :: kOfxActionCreateInstance
+kOfxActionDestroyInstanceInteract       :: kOfxActionDestroyInstance
 kOfxInteractActionDraw                  : cstring : "OfxInteractActionDraw"
 kOfxInteractActionPenMotion             : cstring : "OfxInteractActionPenMotion"
 kOfxInteractActionPenDown               : cstring : "OfxInteractActionPenDown"
@@ -290,9 +397,11 @@ kOfxInteractActionKeyRepeat             : cstring : "OfxInteractActionKeyRepeat"
 kOfxInteractActionGainFocus             : cstring : "OfxInteractActionGainFocus"
 kOfxInteractActionLoseFocus             : cstring : "OfxInteractActionLoseFocus"
 
-kOfxActionDescribeInteract          :: kOfxActionDescribe
-kOfxActionCreateInstanceInteract    :: kOfxActionCreateInstance
-kOfxActionDestroyInstanceInteract   :: kOfxActionDestroyInstance
+OfxInteractSuiteV1 :: struct {
+    interactSwapBuffers:    proc(interactInstance: OfxInteractHandle) -> OfxStatus,
+    interactRedraw:         proc(interactInstance: OfxInteractHandle) -> OfxStatus,
+    interactGetPropertySet: proc(interactInstance: OfxInteractHandle, property: ^OfxPropertySetHandle) -> OfxStatus,
+}
 
 // Key Syms
 
@@ -743,28 +852,6 @@ kOfxParamDoubleTypeNormalisedYAbsolute  : cstring :  "OfxParamDoubleTypeNormalis
 kOfxParamDoubleTypeNormalisedXY         : cstring :  "OfxParamDoubleTypeNormalisedXY"
 kOfxParamDoubleTypeNormalisedXYAbsolute : cstring :  "OfxParamDoubleTypeNormalisedXYAbsolute"
 
-// OpenGL
-
-kOfxOpenGLRenderSuite : cstring : "OfxImageEffectOpenGLRenderSuite"
-
-kOfxImageEffectPropOpenGLRenderSupported    : cstring : "OfxImageEffectPropOpenGLRenderSupported"
-kOfxOpenGLPropPixelDepth                    : cstring : "OfxOpenGLPropPixelDepth"
-kOfxImageEffectPropOpenGLEnabled            : cstring : "OfxImageEffectPropOpenGLEnabled"
-kOfxImageEffectPropOpenGLTextureIndex       : cstring : "OfxImageEffectPropOpenGLTextureIndex"
-kOfxImageEffectPropOpenGLTextureTarget      : cstring : "OfxImageEffectPropOpenGLTextureTarget"
-
-kOfxStatGLOutOfMemory  : i32 : 1001
-kOfxStatGLRenderFailed : i32 : 1002
-
-OfxImageEffectOpenGLRenderSuiteV1 :: struct {
-    clipLoadTexture: proc(clip: OfxImageClipHandle, time: OfxTime, format: cstring, region: ^OfxRectD, textureHandle: ^OfxPropertySetHandle) -> OfxStatus,
-    clipFreeTexture: proc(textureHandle: OfxPropertySetHandle) -> OfxStatus,
-    flushResources: proc() -> OfxStatus,
-}
-
-kOfxActionOpenGLContextAttached : cstring : "OfxActionOpenGLContextAttached"
-kOfxActionOpenGLContextDetached : cstring : "kOfxActionOpenGLContextDetached"
-
 // Param
 
 kOfxParameterSuite          : cstring : "OfxParameterSuite"
@@ -903,6 +990,7 @@ OfxParameterSuiteV1 :: struct {
 // Parametric Param
 
 kOfxParametricParameterSuite                    : cstring : "OfxParametricParameterSuite"
+
 kOfxParamTypeParametric                         : cstring : "OfxParamTypeParametric"
 kOfxParamPropParametricDimension                : cstring : "OfxParamPropParametricDimension"
 kOfxParamPropParametricUIColour                 : cstring : "OfxParamPropParametricUIColour"
