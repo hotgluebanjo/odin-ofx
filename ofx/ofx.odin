@@ -170,15 +170,12 @@ OfxDrawTextAlignment :: enum i32 {
 // TODO
 OfxDrawSuiteV1 :: struct {
     getColour: proc(context_: OfxDrawContextHandle, std_colour: OfxStandardColour, colour: ^OfxRGBAColourF) -> OfxStatus,
-
     setColour: proc(context_: OfxDrawContextHandle, colour: ^OfxRGBAColourF) -> OfxStatus,
 
     setLineWidth: proc(context_: OfxDrawContextHandle, width: f32) -> OfxStatus,
-
     setLineStipple: proc(context_: OfxDrawContextHandle, pattern: OfxDrawLineStipplePattern) -> OfxStatus,
 
     draw: proc(context_: OfxDrawContextHandle, primitive: OfxDrawPrimitive, points: ^OfxPointD, point_count: i32) -> OfxStatus,
-
     drawText: proc(context_: OfxDrawContextHandle, text: cstring, pos: ^OfxPointD, alignment: i32) -> OfxStatus,
 }
 
@@ -845,12 +842,12 @@ OfxYUVAColourF :: struct {
 }
 
 kOfxInteractPropViewportSize            : cstring : "OfxInteractPropViewport"
-kOfxParamDoubleTypeNormalisedX          : cstring :  "OfxParamDoubleTypeNormalisedX"
-kOfxParamDoubleTypeNormalisedY          : cstring :  "OfxParamDoubleTypeNormalisedY"
-kOfxParamDoubleTypeNormalisedXAbsolute  : cstring :  "OfxParamDoubleTypeNormalisedXAbsolute"
-kOfxParamDoubleTypeNormalisedYAbsolute  : cstring :  "OfxParamDoubleTypeNormalisedYAbsolute"
-kOfxParamDoubleTypeNormalisedXY         : cstring :  "OfxParamDoubleTypeNormalisedXY"
-kOfxParamDoubleTypeNormalisedXYAbsolute : cstring :  "OfxParamDoubleTypeNormalisedXYAbsolute"
+kOfxParamDoubleTypeNormalisedX          : cstring : "OfxParamDoubleTypeNormalisedX"
+kOfxParamDoubleTypeNormalisedY          : cstring : "OfxParamDoubleTypeNormalisedY"
+kOfxParamDoubleTypeNormalisedXAbsolute  : cstring : "OfxParamDoubleTypeNormalisedXAbsolute"
+kOfxParamDoubleTypeNormalisedYAbsolute  : cstring : "OfxParamDoubleTypeNormalisedYAbsolute"
+kOfxParamDoubleTypeNormalisedXY         : cstring : "OfxParamDoubleTypeNormalisedXY"
+kOfxParamDoubleTypeNormalisedXYAbsolute : cstring : "OfxParamDoubleTypeNormalisedXYAbsolute"
 
 // Param
 
