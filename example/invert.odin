@@ -91,7 +91,7 @@ render :: proc(instance: ofx.OfxImageEffectHandle, in_args: ofx.OfxPropertySetHa
         if effect.clipGetImage(out_clip, time, nil, &out_img) != ofx.kOfxStatOK {
             // if we were interrupted, the failed fetch is fine, just return
             // kOfxStatOK. otherwise, something weird happened
-            if cast(bool)effect.abort(instance) {
+            if bool(effect.abort(instance)) {
                 return status
             } else {
                 return ofx.kOfxStatFailed
@@ -114,7 +114,7 @@ render :: proc(instance: ofx.OfxImageEffectHandle, in_args: ofx.OfxPropertySetHa
         effect.clipGetHandle(instance, ofx.kOfxImageEffectSimpleSourceClipName, &src_clip, nil)
 
         if effect.clipGetImage(src_clip, time, nil, &src_img) != ofx.kOfxStatOK {
-            if cast(bool)effect.abort(instance) {
+            if bool(effect.abort(instance)) {
                 return status
             } else {
                 return ofx.kOfxStatFailed
@@ -147,7 +147,7 @@ render :: proc(instance: ofx.OfxImageEffectHandle, in_args: ofx.OfxPropertySetHa
     }
 
     for y: i32 = render_bounds.y1; y < render_bounds.y2; y += 1 {
-        if cast(bool)effect.abort(instance) {
+        if bool(effect.abort(instance)) {
             break
         }
 
@@ -186,7 +186,7 @@ plugin_main :: proc(
     in_args: ofx.OfxPropertySetHandle,
     out_args: ofx.OfxPropertySetHandle
 ) -> ofx.OfxStatus {
-    descriptor := ofx.OfxImageEffectHandle(handle);
+    descriptor := ofx.OfxImageEffectHandle(handle)
 
     switch action {
     case ofx.kOfxActionLoad:
