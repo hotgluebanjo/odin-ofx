@@ -14,7 +14,7 @@ OfxHost :: struct {
     fetchSuite: proc(host: OfxPropertySetHandle, suiteName: cstring, suiteVersion: i32) -> rawptr,
 }
 
-OfxPluginEntryPoint :: proc(action: cstring, handle: rawptr, inArgs: OfxPropertySetHandle, outArgs: OfxPropertySetHandle) -> OfxStatus
+OfxPluginEntryPoint :: #type proc(action: cstring, handle: rawptr, inArgs: OfxPropertySetHandle, outArgs: OfxPropertySetHandle) -> OfxStatus
 
 OfxPlugin :: struct {
     pluginApi: cstring,
@@ -809,7 +809,7 @@ kOfxMultiThreadSuite : cstring : "OfxMultiThreadSuite"
 OfxMutex :: struct {}
 OfxMutexHandle :: ^OfxMutex
 
-OfxThreadFunctionV1 :: proc(threadIndex: u32, threadMax: u32, customArg: rawptr)
+OfxThreadFunctionV1 :: #type proc(threadIndex: u32, threadMax: u32, customArg: rawptr)
 
 OfxMultiThreadSuiteV1 :: struct {
     multiThread: proc(func: OfxThreadFunctionV1, nThreads: u32, customArg: rawptr) -> OfxStatus,
@@ -957,7 +957,7 @@ kOfxParamPropCustomValue                    : cstring : "OfxParamPropCustomValue
 kOfxParamPropInterpolationTime              : cstring : "OfxParamPropInterpolationTime"
 kOfxParamPropInterpolationAmount            : cstring : "OfxParamPropInterpolationAmount"
 
-OfxCustomParamInterpFuncV1 :: proc(instance: OfxParamSetHandle, inArgs: OfxPropertySetHandle, outArgs: OfxPropertySetHandle) -> OfxStatus
+OfxCustomParamInterpFuncV1 :: #type proc(instance: OfxParamSetHandle, inArgs: OfxPropertySetHandle, outArgs: OfxPropertySetHandle) -> OfxStatus
 
 OfxParameterSuiteV1 :: struct {
     paramDefine:            proc(paramSet: OfxParamSetHandle, paramType: cstring, name: cstring, propertySet: ^OfxPropertySetHandle) -> OfxStatus,
