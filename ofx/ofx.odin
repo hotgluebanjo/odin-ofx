@@ -113,16 +113,16 @@ OfxDialogSuiteV1 :: struct {
     NotifyRedrawPending: proc "c" () -> OfxStatus,
 }
 
-// TODO: _context.
+// TODO: context_.
 OfxDrawSuiteV1 :: struct {
-    getColour:      proc "c" (_context: OfxDrawContextHandle, std_colour: OfxStandardColour, colour: ^OfxRGBAColourF) -> OfxStatus,
-    setColour:      proc "c" (_context: OfxDrawContextHandle, colour: ^OfxRGBAColourF) -> OfxStatus,
+    getColour:      proc "c" (context_: OfxDrawContextHandle, std_colour: OfxStandardColour, colour: ^OfxRGBAColourF) -> OfxStatus,
+    setColour:      proc "c" (context_: OfxDrawContextHandle, colour: ^OfxRGBAColourF) -> OfxStatus,
 
-    setLineWidth:   proc "c" (_context: OfxDrawContextHandle, width: f32) -> OfxStatus,
-    setLineStipple: proc "c" (_context: OfxDrawContextHandle, pattern: OfxDrawLineStipplePattern) -> OfxStatus,
+    setLineWidth:   proc "c" (context_: OfxDrawContextHandle, width: f32) -> OfxStatus,
+    setLineStipple: proc "c" (context_: OfxDrawContextHandle, pattern: OfxDrawLineStipplePattern) -> OfxStatus,
 
-    draw:           proc "c" (_context: OfxDrawContextHandle, primitive: OfxDrawPrimitive, points: ^OfxPointD, point_count: i32) -> OfxStatus,
-    drawText:       proc "c" (_context: OfxDrawContextHandle, text: cstring, pos: ^OfxPointD, alignment: i32) -> OfxStatus,
+    draw:           proc "c" (context_: OfxDrawContextHandle, primitive: OfxDrawPrimitive, points: ^OfxPointD, point_count: i32) -> OfxStatus,
+    drawText:       proc "c" (context_: OfxDrawContextHandle, text: cstring, pos: ^OfxPointD, alignment: i32) -> OfxStatus,
 }
 
 OfxImageEffectOpenGLRenderSuiteV1 :: struct {
