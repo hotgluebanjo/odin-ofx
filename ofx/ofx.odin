@@ -438,12 +438,9 @@ kOfxActionEndInstanceEdit                           : cstring : "OfxActionEndIns
 kOfxActionDialog                                    : cstring : "OfxActionDialog"
 kOfxActionOpenGLContextAttached                     : cstring : "OfxActionOpenGLContextAttached"
 kOfxActionOpenGLContextDetached                     : cstring : "kOfxActionOpenGLContextDetached"
-kOfxActionDescribeInteract                          :: kOfxActionDescribe
-kOfxActionCreateInstanceInteract                    :: kOfxActionCreateInstance
-kOfxActionDestroyInstanceInteract                   :: kOfxActionDestroyInstance
-
-kOfxImageEffectPluginApi                            : cstring : "OfxImageEffectPluginAPI"
-kOfxImageEffectPluginApiVersion                     : i32     : 1
+kOfxActionDescribeInteract                          : cstring : kOfxActionDescribe
+kOfxActionCreateInstanceInteract                    : cstring : kOfxActionCreateInstance
+kOfxActionDestroyInstanceInteract                   : cstring : kOfxActionDestroyInstance
 
 kOfxImageEffectActionGetRegionOfDefinition          : cstring : "OfxImageEffectActionGetRegionOfDefinition"
 kOfxImageEffectActionGetRegionsOfInterest           : cstring : "OfxImageEffectActionGetRegionsOfInterest"
@@ -472,8 +469,11 @@ kOfxImageEffectRenderFullySafe                      : cstring : "OfxImageEffectR
 
 kOfxImageEffectFrameVarying                         : cstring : "OfxImageEffectFrameVarying"
 
-kOfxImageEffectPluginPropSingleInstance             : cstring : "OfxImageEffectPluginPropSingleInstance"
+kOfxImageEffectPluginApi                            : cstring : "OfxImageEffectPluginAPI"
+kOfxImageEffectPluginApiVersion                     : i32     : 1
 kOfxImageEffectPluginRenderThreadSafety             : cstring : "OfxImageEffectPluginRenderThreadSafety"
+
+kOfxImageEffectPluginPropSingleInstance             : cstring : "OfxImageEffectPluginPropSingleInstance"
 kOfxImageEffectPluginPropHostFrameThreading         : cstring : "OfxImageEffectPluginPropHostFrameThreading"
 kOfxImageEffectPluginPropGrouping                   : cstring : "OfxImageEffectPluginPropGrouping"
 kOfxImageEffectPluginPropOverlayInteractV1          : cstring : "OfxImageEffectPluginPropOverlayInteractV1"
@@ -611,6 +611,7 @@ kOfxParamPropInteractSize                           : cstring : "OfxParamPropInt
 kOfxParamPropInteractSizeAspect                     : cstring : "OfxParamPropInteractSizeAspect"
 kOfxParamPropInteractMinimumSize                    : cstring : "OfxParamPropInteractMinimumSize"
 kOfxParamPropInteractPreferedSize                   : cstring : "OfxParamPropInteractPreferedSize"
+
 kOfxParamPropType                                   : cstring : "OfxParamPropType"
 kOfxParamPropAnimates                               : cstring : "OfxParamPropAnimates"
 kOfxParamPropCanUndo                                : cstring : "OfxParamPropCanUndo"
