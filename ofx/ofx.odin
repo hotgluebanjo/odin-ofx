@@ -89,7 +89,7 @@ OfxParamSetHandle    :: OfxOpaqueHandle
 OfxMutexHandle       :: OfxOpaqueHandle
 
 // TODO: Are these procedure types necessary?
-OfxPluginEntryPoint        :: #type proc(action: cstring, handle: rawptr, inArgs: OfxPropertySetHandle, outArgs: OfxPropertySetHandle) -> OfxStatus
+OfxPluginEntryPoint        :: #type proc "c" (action: cstring, handle: rawptr, inArgs: OfxPropertySetHandle, outArgs: OfxPropertySetHandle) -> OfxStatus
 OfxThreadFunctionV1        :: #type proc "c" (threadIndex: u32, threadMax: u32, customArg: rawptr)
 OfxCustomParamInterpFuncV1 :: #type proc "c" (instance: OfxParamSetHandle, inArgs: OfxPropertySetHandle, outArgs: OfxPropertySetHandle) -> OfxStatus
 
@@ -104,7 +104,7 @@ OfxPlugin :: struct {
     pluginIdentifier: cstring,
     pluginVersionMajor: u32,
     pluginVersionMinor: u32,
-    setHost: proc(host: ^OfxHost),
+    setHost: proc "c" (host: ^OfxHost),
     mainEntry: OfxPluginEntryPoint,
 }
 
