@@ -3,10 +3,11 @@ package ofx
 
 import "core:c"
 
-// TODO: `"kOfx` strings. Calling convention consistency?
+// NOTE: There is a `k` prefix in some string constants. This is not an error.
 
 Status :: i32
-Time   :: f64
+
+Time :: f64
 
 RangeI :: struct {
     min, max: i32,
@@ -76,19 +77,16 @@ YUVAColourF :: struct {
     y, u, v, a: f32,
 }
 
-OpaqueHandle :: ^(struct {})
+PropertySetHandle :: distinct rawptr
+DrawContextHandle :: distinct rawptr
+ImageEffectHandle :: distinct rawptr
+ImageClipHandle   :: distinct rawptr
+ImageMemoryHandle :: distinct rawptr
+InteractHandle    :: distinct rawptr
+ParamHandle       :: distinct rawptr
+ParamSetHandle    :: distinct rawptr
+MutexHandle       :: distinct rawptr
 
-PropertySetHandle :: OpaqueHandle
-DrawContextHandle :: OpaqueHandle
-ImageEffectHandle :: OpaqueHandle
-ImageClipHandle   :: OpaqueHandle
-ImageMemoryHandle :: OpaqueHandle
-InteractHandle    :: OpaqueHandle
-ParamHandle       :: OpaqueHandle
-ParamSetHandle    :: OpaqueHandle
-MutexHandle       :: OpaqueHandle
-
-// TODO: Are these procedure types necessary?
 PluginEntryPoint        :: #type proc "c" (action: cstring, handle: rawptr, inArgs: PropertySetHandle, outArgs: PropertySetHandle) -> Status
 ThreadFunctionV1        :: #type proc "c" (threadIndex: u32, threadMax: u32, customArg: rawptr)
 CustomParamInterpFuncV1 :: #type proc "c" (instance: ParamSetHandle, inArgs: PropertySetHandle, outArgs: PropertySetHandle) -> Status
@@ -113,16 +111,15 @@ DialogSuiteV1 :: struct {
     NotifyRedrawPending: proc "c" () -> Status,
 }
 
-// TODO: context_.
 DrawSuiteV1 :: struct {
-    getColour:      proc "c" (context_: DrawContextHandle, std_colour: StandardColour, colour: ^RGBAColourF) -> Status,
-    setColour:      proc "c" (context_: DrawContextHandle, colour: ^RGBAColourF) -> Status,
+    getColour:      proc "c" (ctx: DrawContextHandle, std_colour: StandardColour, colour: ^RGBAColourF) -> Status,
+    setColour:      proc "c" (ctx: DrawContextHandle, colour: ^RGBAColourF) -> Status,
 
-    setLineWidth:   proc "c" (context_: DrawContextHandle, width: f32) -> Status,
-    setLineStipple: proc "c" (context_: DrawContextHandle, pattern: DrawLineStipplePattern) -> Status,
+    setLineWidth:   proc "c" (ctx: DrawContextHandle, width: f32) -> Status,
+    setLineStipple: proc "c" (ctx: DrawContextHandle, pattern: DrawLineStipplePattern) -> Status,
 
-    draw:           proc "c" (context_: DrawContextHandle, primitive: DrawPrimitive, points: ^PointD, point_count: i32) -> Status,
-    drawText:       proc "c" (context_: DrawContextHandle, text: cstring, pos: ^PointD, alignment: i32) -> Status,
+    draw:           proc "c" (ctx: DrawContextHandle, primitive: DrawPrimitive, points: ^PointD, point_count: i32) -> Status,
+    drawText:       proc "c" (ctx: DrawContextHandle, text: cstring, pos: ^PointD, alignment: i32) -> Status,
 }
 
 ImageEffectOpenGLRenderSuiteV1 :: struct {
