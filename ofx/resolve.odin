@@ -1,9 +1,9 @@
 package ofx
 
-kOfxImageClipPropThumbnail                  : cstring : "kOfxImageClipPropThumbnail"
-kOfxImageEffectPropResolvePage              : cstring : "OfxImageEffectPropResolvePage"
-kOfxImageEffectPropNoSpatialAwareness       : cstring : "OfxImageEffectPropNoSpatialAwareness"
+ImageClipPropThumbnail                  : cstring : "kOfxImageClipPropThumbnail"
+ImageEffectPropResolvePage              : cstring : "OfxImageEffectPropResolvePage"
+ImageEffectPropNoSpatialAwareness       : cstring : "OfxImageEffectPropNoSpatialAwareness"
 
-kOfxParamTypeStrChoice                      : cstring : "OfxParamTypeStrChoice"
-kOfxParamPropChoiceEnum                     : cstring : "OfxParamPropChoiceEnum"
-kOfxParamHostPropSupportsStrChoiceAnimation : cstring : "OfxParamHostPropSupportsStrChoiceAnimation"
+ParamTypeStrChoice                      : cstring : "OfxParamTypeStrChoice"
+ParamPropChoiceEnum                     : cstring : "OfxParamPropChoiceEnum"
+ParamHostPropSupportsStrChoiceAnimation : cstring : "OfxParamHostPropSupportsStrChoiceAnimation"

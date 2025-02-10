@@ -5,1045 +5,1045 @@ import "core:c"
 
 // TODO: `"kOfx` strings. Calling convention consistency?
 
-OfxStatus :: i32
-OfxTime   :: f64
+Status :: i32
+Time   :: f64
 
-OfxRangeI :: struct {
+RangeI :: struct {
     min, max: i32,
 }
 
-OfxRangeD :: struct {
+RangeD :: struct {
     min, max: f64,
 }
 
-OfxPointI :: struct {
+PointI :: struct {
     x, y: i32,
 }
 
-OfxPointD :: struct {
+PointD :: struct {
     x, y: f64,
 }
 
-OfxRectI :: struct {
+RectI :: struct {
     x1, y1, x2, y2: i32,
 }
 
-OfxRectD :: struct {
+RectD :: struct {
     x1, y1, x2, y2: f64,
 }
 
-OfxRGBAColourB :: struct {
+RGBAColourB :: struct {
     r, g, b, a: byte,
 }
 
-OfxRGBAColourS :: struct {
+RGBAColourS :: struct {
     r, g, b, a: u16,
 }
 
-OfxRGBAColourF :: struct {
+RGBAColourF :: struct {
     r, g, b, a: f32,
 }
 
-OfxRGBAColourD :: struct {
+RGBAColourD :: struct {
     r, g, b, a: f64,
 }
 
-OfxRGBColourB :: struct {
+RGBColourB :: struct {
     r, g, b: byte,
 }
 
-OfxRGBColourS :: struct {
+RGBColourS :: struct {
     r, g, b: u16,
 }
 
-OfxRGBColourF :: struct {
+RGBColourF :: struct {
     r, g, b: f32,
 }
 
-OfxRGBColourD :: struct {
+RGBColourD :: struct {
     r, g, b: f64,
 }
 
-OfxYUVAColourB :: struct {
+YUVAColourB :: struct {
     y, u, v, a: byte,
 }
 
-OfxYUVAColourS :: struct {
+YUVAColourS :: struct {
     y, u, v, a: u16,
 }
 
-OfxYUVAColourF :: struct {
+YUVAColourF :: struct {
     y, u, v, a: f32,
 }
 
-OfxOpaqueHandle :: ^(struct {})
+OpaqueHandle :: ^(struct {})
 
-OfxPropertySetHandle :: OfxOpaqueHandle
-OfxDrawContextHandle :: OfxOpaqueHandle
-OfxImageEffectHandle :: OfxOpaqueHandle
-OfxImageClipHandle   :: OfxOpaqueHandle
-OfxImageMemoryHandle :: OfxOpaqueHandle
-OfxInteractHandle    :: OfxOpaqueHandle
-OfxParamHandle       :: OfxOpaqueHandle
-OfxParamSetHandle    :: OfxOpaqueHandle
-OfxMutexHandle       :: OfxOpaqueHandle
+PropertySetHandle :: OpaqueHandle
+DrawContextHandle :: OpaqueHandle
+ImageEffectHandle :: OpaqueHandle
+ImageClipHandle   :: OpaqueHandle
+ImageMemoryHandle :: OpaqueHandle
+InteractHandle    :: OpaqueHandle
+ParamHandle       :: OpaqueHandle
+ParamSetHandle    :: OpaqueHandle
+MutexHandle       :: OpaqueHandle
 
 // TODO: Are these procedure types necessary?
-OfxPluginEntryPoint        :: #type proc "c" (action: cstring, handle: rawptr, inArgs: OfxPropertySetHandle, outArgs: OfxPropertySetHandle) -> OfxStatus
-OfxThreadFunctionV1        :: #type proc "c" (threadIndex: u32, threadMax: u32, customArg: rawptr)
-OfxCustomParamInterpFuncV1 :: #type proc "c" (instance: OfxParamSetHandle, inArgs: OfxPropertySetHandle, outArgs: OfxPropertySetHandle) -> OfxStatus
+PluginEntryPoint        :: #type proc "c" (action: cstring, handle: rawptr, inArgs: PropertySetHandle, outArgs: PropertySetHandle) -> Status
+ThreadFunctionV1        :: #type proc "c" (threadIndex: u32, threadMax: u32, customArg: rawptr)
+CustomParamInterpFuncV1 :: #type proc "c" (instance: ParamSetHandle, inArgs: PropertySetHandle, outArgs: PropertySetHandle) -> Status
 
-OfxHost :: struct {
-    host: OfxPropertySetHandle,
-    fetchSuite: proc "c" (host: OfxPropertySetHandle, suiteName: cstring, suiteVersion: i32) -> rawptr,
+Host :: struct {
+    host: PropertySetHandle,
+    fetchSuite: proc "c" (host: PropertySetHandle, suiteName: cstring, suiteVersion: i32) -> rawptr,
 }
 
-OfxPlugin :: struct {
+Plugin :: struct {
     pluginApi: cstring,
     apiVersion: i32,
     pluginIdentifier: cstring,
     pluginVersionMajor: u32,
     pluginVersionMinor: u32,
-    setHost: proc "c" (host: ^OfxHost),
-    mainEntry: OfxPluginEntryPoint,
+    setHost: proc "c" (host: ^Host),
+    mainEntry: PluginEntryPoint,
 }
 
-OfxDialogSuiteV1 :: struct {
-    RequestDialog: proc "c" (user_data: rawptr) -> OfxStatus,
-    NotifyRedrawPending: proc "c" () -> OfxStatus,
+DialogSuiteV1 :: struct {
+    RequestDialog: proc "c" (user_data: rawptr) -> Status,
+    NotifyRedrawPending: proc "c" () -> Status,
 }
 
 // TODO: context_.
-OfxDrawSuiteV1 :: struct {
-    getColour:      proc "c" (context_: OfxDrawContextHandle, std_colour: OfxStandardColour, colour: ^OfxRGBAColourF) -> OfxStatus,
-    setColour:      proc "c" (context_: OfxDrawContextHandle, colour: ^OfxRGBAColourF) -> OfxStatus,
+DrawSuiteV1 :: struct {
+    getColour:      proc "c" (context_: DrawContextHandle, std_colour: StandardColour, colour: ^RGBAColourF) -> Status,
+    setColour:      proc "c" (context_: DrawContextHandle, colour: ^RGBAColourF) -> Status,
 
-    setLineWidth:   proc "c" (context_: OfxDrawContextHandle, width: f32) -> OfxStatus,
-    setLineStipple: proc "c" (context_: OfxDrawContextHandle, pattern: OfxDrawLineStipplePattern) -> OfxStatus,
+    setLineWidth:   proc "c" (context_: DrawContextHandle, width: f32) -> Status,
+    setLineStipple: proc "c" (context_: DrawContextHandle, pattern: DrawLineStipplePattern) -> Status,
 
-    draw:           proc "c" (context_: OfxDrawContextHandle, primitive: OfxDrawPrimitive, points: ^OfxPointD, point_count: i32) -> OfxStatus,
-    drawText:       proc "c" (context_: OfxDrawContextHandle, text: cstring, pos: ^OfxPointD, alignment: i32) -> OfxStatus,
+    draw:           proc "c" (context_: DrawContextHandle, primitive: DrawPrimitive, points: ^PointD, point_count: i32) -> Status,
+    drawText:       proc "c" (context_: DrawContextHandle, text: cstring, pos: ^PointD, alignment: i32) -> Status,
 }
 
-OfxImageEffectOpenGLRenderSuiteV1 :: struct {
-    clipLoadTexture: proc "c" (clip: OfxImageClipHandle, time: OfxTime, format: cstring, region: ^OfxRectD, textureHandle: ^OfxPropertySetHandle) -> OfxStatus,
-    clipFreeTexture: proc "c" (textureHandle: OfxPropertySetHandle) -> OfxStatus,
-    flushResources: proc "c" () -> OfxStatus,
+ImageEffectOpenGLRenderSuiteV1 :: struct {
+    clipLoadTexture: proc "c" (clip: ImageClipHandle, time: Time, format: cstring, region: ^RectD, textureHandle: ^PropertySetHandle) -> Status,
+    clipFreeTexture: proc "c" (textureHandle: PropertySetHandle) -> Status,
+    flushResources: proc "c" () -> Status,
 }
 
-OfxImageEffectSuiteV1 :: struct {
-    getPropertySet:            proc "c" (imageEffect: OfxImageEffectHandle, propHandle: ^OfxPropertySetHandle) -> OfxStatus,
-    getParamSet:               proc "c" (imageEffect: OfxImageEffectHandle, paramSet: ^OfxParamSetHandle) -> OfxStatus,
+ImageEffectSuiteV1 :: struct {
+    getPropertySet:            proc "c" (imageEffect: ImageEffectHandle, propHandle: ^PropertySetHandle) -> Status,
+    getParamSet:               proc "c" (imageEffect: ImageEffectHandle, paramSet: ^ParamSetHandle) -> Status,
 
-    clipDefine:                proc "c" (imageEffect: OfxImageEffectHandle, name: cstring, propertySet: ^OfxPropertySetHandle) -> OfxStatus,
-    clipGetHandle:             proc "c" (imageEffect: OfxImageEffectHandle, name: cstring, clip: ^OfxImageClipHandle, propertySet: ^OfxPropertySetHandle) -> OfxStatus,
-    clipGetPropertySet:        proc "c" (clip: OfxImageClipHandle, propHandle: ^OfxPropertySetHandle) -> OfxStatus,
-    clipGetImage:              proc "c" (clip: OfxImageClipHandle, time: OfxTime, region: ^OfxRectD, imageHandle: ^OfxPropertySetHandle) -> OfxStatus,
-    clipReleaseImage:          proc "c" (imageHandle: OfxPropertySetHandle) -> OfxStatus,
-    clipGetRegionOfDefinition: proc "c" (clip: OfxImageClipHandle, time: OfxTime, bounds: ^OfxRectD) -> OfxStatus,
+    clipDefine:                proc "c" (imageEffect: ImageEffectHandle, name: cstring, propertySet: ^PropertySetHandle) -> Status,
+    clipGetHandle:             proc "c" (imageEffect: ImageEffectHandle, name: cstring, clip: ^ImageClipHandle, propertySet: ^PropertySetHandle) -> Status,
+    clipGetPropertySet:        proc "c" (clip: ImageClipHandle, propHandle: ^PropertySetHandle) -> Status,
+    clipGetImage:              proc "c" (clip: ImageClipHandle, time: Time, region: ^RectD, imageHandle: ^PropertySetHandle) -> Status,
+    clipReleaseImage:          proc "c" (imageHandle: PropertySetHandle) -> Status,
+    clipGetRegionOfDefinition: proc "c" (clip: ImageClipHandle, time: Time, bounds: ^RectD) -> Status,
 
-    abort:                     proc "c" (imageEffect: OfxImageEffectHandle) -> i32,
+    abort:                     proc "c" (imageEffect: ImageEffectHandle) -> i32,
 
-    imageMemoryAlloc:          proc "c" (instanceHandle: OfxImageEffectHandle, nBytes: uint, memoryHandle: ^OfxImageMemoryHandle) -> OfxStatus,
-    imageMemoryFree:           proc "c" (memoryHandle: OfxImageMemoryHandle) -> OfxStatus,
-    imageMemoryLock:           proc "c" (memoryHandle: OfxImageMemoryHandle, returnedPtr: ^rawptr) -> OfxStatus,
-    imageMemoryUnlock:         proc "c" (memoryHandle: OfxImageMemoryHandle) -> OfxStatus,
+    imageMemoryAlloc:          proc "c" (instanceHandle: ImageEffectHandle, nBytes: uint, memoryHandle: ^ImageMemoryHandle) -> Status,
+    imageMemoryFree:           proc "c" (memoryHandle: ImageMemoryHandle) -> Status,
+    imageMemoryLock:           proc "c" (memoryHandle: ImageMemoryHandle, returnedPtr: ^rawptr) -> Status,
+    imageMemoryUnlock:         proc "c" (memoryHandle: ImageMemoryHandle) -> Status,
 }
 
-OfxInteractSuiteV1 :: struct {
-    interactSwapBuffers:    proc "c" (interactInstance: OfxInteractHandle) -> OfxStatus,
-    interactRedraw:         proc "c" (interactInstance: OfxInteractHandle) -> OfxStatus,
-    interactGetPropertySet: proc "c" (interactInstance: OfxInteractHandle, property: ^OfxPropertySetHandle) -> OfxStatus,
+InteractSuiteV1 :: struct {
+    interactSwapBuffers:    proc "c" (interactInstance: InteractHandle) -> Status,
+    interactRedraw:         proc "c" (interactInstance: InteractHandle) -> Status,
+    interactGetPropertySet: proc "c" (interactInstance: InteractHandle, property: ^PropertySetHandle) -> Status,
 }
 
-OfxMemorySuiteV1 :: struct {
-    memoryAlloc: proc "c" (handle: rawptr, nBytes: uint, allocatedData: ^rawptr) -> OfxStatus,
-    memoryFree: proc "c" (allocatedData: rawptr) -> OfxStatus,
+MemorySuiteV1 :: struct {
+    memoryAlloc: proc "c" (handle: rawptr, nBytes: uint, allocatedData: ^rawptr) -> Status,
+    memoryFree: proc "c" (allocatedData: rawptr) -> Status,
 }
 
-OfxMessageSuiteV1 :: struct {
-    message: proc "c" (handle: rawptr, messageType: cstring, messageId: cstring, format: cstring, #c_vararg args: ..any) -> OfxStatus,
+MessageSuiteV1 :: struct {
+    message: proc "c" (handle: rawptr, messageType: cstring, messageId: cstring, format: cstring, #c_vararg args: ..any) -> Status,
 }
 
-OfxMessageSuiteV2 :: struct {
-    message:                proc "c" (handle: rawptr, messageType: cstring, messageId: cstring, format: cstring, #c_vararg args: ..any) -> OfxStatus,
-    setPersistentMessage:   proc "c" (handle: rawptr, messageType: cstring, messageId: cstring, format: cstring, #c_vararg args: ..any) -> OfxStatus,
-    clearPersistentMessage: proc "c" (handle: rawptr) -> OfxStatus,
+MessageSuiteV2 :: struct {
+    message:                proc "c" (handle: rawptr, messageType: cstring, messageId: cstring, format: cstring, #c_vararg args: ..any) -> Status,
+    setPersistentMessage:   proc "c" (handle: rawptr, messageType: cstring, messageId: cstring, format: cstring, #c_vararg args: ..any) -> Status,
+    clearPersistentMessage: proc "c" (handle: rawptr) -> Status,
 }
 
-OfxMultiThreadSuiteV1 :: struct {
-    multiThread: proc "c" (func: OfxThreadFunctionV1, nThreads: u32, customArg: rawptr) -> OfxStatus,
-    multiThreadNumCPUs: proc "c" (nCPUs: ^u32) -> OfxStatus,
+MultiThreadSuiteV1 :: struct {
+    multiThread: proc "c" (func: ThreadFunctionV1, nThreads: u32, customArg: rawptr) -> Status,
+    multiThreadNumCPUs: proc "c" (nCPUs: ^u32) -> Status,
 
-    multiThreadIndex: proc "c" (threadIndex: ^u32) -> OfxStatus,
+    multiThreadIndex: proc "c" (threadIndex: ^u32) -> Status,
     multiThreadIsSpawnedThread: proc "c" () -> i32,
 
-    mutexCreate: proc "c" (mutex: ^OfxMutexHandle, lockCount: i32) -> OfxStatus,
-    mutexDestroy: proc "c" (mutex: OfxMutexHandle) -> OfxStatus,
-    mutexLock:    proc "c" (mutex: OfxMutexHandle) -> OfxStatus,
-    mutexUnLock:  proc "c" (mutex: OfxMutexHandle) -> OfxStatus,
-    mutexTryLock: proc "c" (mutex: OfxMutexHandle) -> OfxStatus,
+    mutexCreate: proc "c" (mutex: ^MutexHandle, lockCount: i32) -> Status,
+    mutexDestroy: proc "c" (mutex: MutexHandle) -> Status,
+    mutexLock:    proc "c" (mutex: MutexHandle) -> Status,
+    mutexUnLock:  proc "c" (mutex: MutexHandle) -> Status,
+    mutexTryLock: proc "c" (mutex: MutexHandle) -> Status,
 }
 
-OfxParameterSuiteV1 :: struct {
-    paramDefine:            proc "c" (paramSet: OfxParamSetHandle, paramType: cstring, name: cstring, propertySet: ^OfxPropertySetHandle) -> OfxStatus,
-    paramGetHandle:         proc "c" (paramSet: OfxParamSetHandle, name: cstring, param: ^OfxParamHandle, propertySet: ^OfxPropertySetHandle) -> OfxStatus,
-    paramSetGetPropertySet: proc "c" (paramSet: OfxParamSetHandle, propHandle: ^OfxPropertySetHandle) -> OfxStatus,
+ParameterSuiteV1 :: struct {
+    paramDefine:            proc "c" (paramSet: ParamSetHandle, paramType: cstring, name: cstring, propertySet: ^PropertySetHandle) -> Status,
+    paramGetHandle:         proc "c" (paramSet: ParamSetHandle, name: cstring, param: ^ParamHandle, propertySet: ^PropertySetHandle) -> Status,
+    paramSetGetPropertySet: proc "c" (paramSet: ParamSetHandle, propHandle: ^PropertySetHandle) -> Status,
 
-    paramGetPropertySet:    proc "c" (param: OfxParamHandle, propHandle: ^OfxPropertySetHandle) -> OfxStatus,
+    paramGetPropertySet:    proc "c" (param: ParamHandle, propHandle: ^PropertySetHandle) -> Status,
 
-    paramGetValue:          proc "c" (paramHandle: OfxParamHandle, #c_vararg args: ..any) -> OfxStatus,
-    paramGetValueAtTime:    proc "c" (paramHandle: OfxParamHandle, time: OfxTime, #c_vararg args: ..any) -> OfxStatus,
-    paramGetDerivative:     proc "c" (paramHandle: OfxParamHandle, time: OfxTime, #c_vararg args: ..any) -> OfxStatus,
-    paramGetIntegral:       proc "c" (paramHandle: OfxParamHandle, time1: OfxTime, time2: OfxTime, #c_vararg args: ..any) -> OfxStatus,
+    paramGetValue:          proc "c" (paramHandle: ParamHandle, #c_vararg args: ..any) -> Status,
+    paramGetValueAtTime:    proc "c" (paramHandle: ParamHandle, time: Time, #c_vararg args: ..any) -> Status,
+    paramGetDerivative:     proc "c" (paramHandle: ParamHandle, time: Time, #c_vararg args: ..any) -> Status,
+    paramGetIntegral:       proc "c" (paramHandle: ParamHandle, time1: Time, time2: Time, #c_vararg args: ..any) -> Status,
 
-    paramSetValue:          proc "c" (paramHandle: OfxParamHandle, #c_vararg args: ..any) -> OfxStatus,
-    paramSetValueAtTime:    proc "c" (paramHandle: OfxParamHandle, time: OfxTime, #c_vararg args: ..any) -> OfxStatus,
+    paramSetValue:          proc "c" (paramHandle: ParamHandle, #c_vararg args: ..any) -> Status,
+    paramSetValueAtTime:    proc "c" (paramHandle: ParamHandle, time: Time, #c_vararg args: ..any) -> Status,
 
-    paramGetNumKeys:        proc "c" (paramHandle: OfxParamHandle, numberOfKeys: ^u32) -> OfxStatus,
-    paramGetKeyTime:        proc "c" (paramHandle: OfxParamHandle, nthKey: u32, time: ^OfxTime) -> OfxStatus,
-    paramGetKeyIndex:       proc "c" (paramHandle: OfxParamHandle, time: OfxTime, direction: i32, index: ^i32) -> OfxStatus,
+    paramGetNumKeys:        proc "c" (paramHandle: ParamHandle, numberOfKeys: ^u32) -> Status,
+    paramGetKeyTime:        proc "c" (paramHandle: ParamHandle, nthKey: u32, time: ^Time) -> Status,
+    paramGetKeyIndex:       proc "c" (paramHandle: ParamHandle, time: Time, direction: i32, index: ^i32) -> Status,
 
-    paramDeleteKey:         proc "c" (paramHandle: OfxParamHandle, time: OfxTime) -> OfxStatus,
-    paramDeleteAllKeys:     proc "c" (paramHandle: OfxParamHandle) -> OfxStatus,
+    paramDeleteKey:         proc "c" (paramHandle: ParamHandle, time: Time) -> Status,
+    paramDeleteAllKeys:     proc "c" (paramHandle: ParamHandle) -> Status,
 
-    paramCopy:              proc "c" (paramTo: OfxParamHandle, paramFrom: OfxParamHandle, dstOffset: OfxTime, frameRange: ^OfxRangeD) -> OfxStatus,
+    paramCopy:              proc "c" (paramTo: ParamHandle, paramFrom: ParamHandle, dstOffset: Time, frameRange: ^RangeD) -> Status,
 
-    paramEditBegin:         proc "c" (paramSet: OfxParamSetHandle, name: cstring) -> OfxStatus,
-    paramEditEnd:           proc "c" (paramSet: OfxParamSetHandle) -> OfxStatus,
+    paramEditBegin:         proc "c" (paramSet: ParamSetHandle, name: cstring) -> Status,
+    paramEditEnd:           proc "c" (paramSet: ParamSetHandle) -> Status,
 }
 
-OfxParametricParameterSuiteV1 :: struct {
-    parametricParamGetValue:               proc "c" (param: OfxParamHandle, curveIndex: i32, time: OfxTime, parametricPosition: f64, returnValue: ^f64) -> OfxStatus,
-    parametricParamGetNControlPoints:      proc "c" (param: OfxParamHandle, curveIndex: i32, time: f64, returnValue: ^i32) -> OfxStatus,
-    parametricParamGetNthControlPoint:     proc "c" (param: OfxParamHandle, curveIndex: i32, time: f64, nthCtl: i32, key: ^f64, value: ^f64) -> OfxStatus,
+ParametricParameterSuiteV1 :: struct {
+    parametricParamGetValue:               proc "c" (param: ParamHandle, curveIndex: i32, time: Time, parametricPosition: f64, returnValue: ^f64) -> Status,
+    parametricParamGetNControlPoints:      proc "c" (param: ParamHandle, curveIndex: i32, time: f64, returnValue: ^i32) -> Status,
+    parametricParamGetNthControlPoint:     proc "c" (param: ParamHandle, curveIndex: i32, time: f64, nthCtl: i32, key: ^f64, value: ^f64) -> Status,
 
-    parametricParamSetNthControlPoint:     proc "c" (param: OfxParamHandle, curveIndex: i32, time: f64, nthCtl: i32, key: f64, value: f64, addAnimationKey: bool) -> OfxStatus,
+    parametricParamSetNthControlPoint:     proc "c" (param: ParamHandle, curveIndex: i32, time: f64, nthCtl: i32, key: f64, value: f64, addAnimationKey: bool) -> Status,
 
-    parametricParamAddControlPoint:        proc "c" (param: OfxParamHandle, curveIndex: i32, time: f64, key: f64, value: f64, addAnimationKey: bool) -> OfxStatus,
+    parametricParamAddControlPoint:        proc "c" (param: ParamHandle, curveIndex: i32, time: f64, key: f64, value: f64, addAnimationKey: bool) -> Status,
 
-    parametricParamDeleteControlPoint:     proc "c" (param: OfxParamHandle, curveIndex: i32, nthCtl: i32) -> OfxStatus,
-    parametricParamDeleteAllControlPoints: proc "c" (param: OfxParamHandle, curveIndex: i32) -> OfxStatus,
+    parametricParamDeleteControlPoint:     proc "c" (param: ParamHandle, curveIndex: i32, nthCtl: i32) -> Status,
+    parametricParamDeleteAllControlPoints: proc "c" (param: ParamHandle, curveIndex: i32) -> Status,
 }
 
-OfxProgressSuiteV1 :: struct {
-    progressStart:  proc "c" (effectInstance: rawptr, label: cstring) -> OfxStatus,
-    progressUpdate: proc "c" (effectInstance: rawptr, progress: f64) -> OfxStatus,
-    progressEnd:    proc "c" (effectInstance: rawptr) -> OfxStatus,
+ProgressSuiteV1 :: struct {
+    progressStart:  proc "c" (effectInstance: rawptr, label: cstring) -> Status,
+    progressUpdate: proc "c" (effectInstance: rawptr, progress: f64) -> Status,
+    progressEnd:    proc "c" (effectInstance: rawptr) -> Status,
 }
 
-OfxProgressSuiteV2 :: struct {
-    progressStart:  proc "c" (effectInstance: rawptr, message: cstring, messageid: cstring) -> OfxStatus,
-    progressUpdate: proc "c" (effectInstance: rawptr, progress: f64) -> OfxStatus,
-    progressEnd:    proc "c" (effectInstance: rawptr) -> OfxStatus,
+ProgressSuiteV2 :: struct {
+    progressStart:  proc "c" (effectInstance: rawptr, message: cstring, messageid: cstring) -> Status,
+    progressUpdate: proc "c" (effectInstance: rawptr, progress: f64) -> Status,
+    progressEnd:    proc "c" (effectInstance: rawptr) -> Status,
 }
 
-OfxPropertySuiteV1 :: struct {
-    propSetPointer:   proc "c" (properties: OfxPropertySetHandle, property: cstring, index: i32, value: rawptr) -> OfxStatus,
-    propSetString:    proc "c" (properties: OfxPropertySetHandle, property: cstring, index: i32, value: cstring) -> OfxStatus,
-    propSetDouble:    proc "c" (properties: OfxPropertySetHandle, property: cstring, index: i32, value: f64) -> OfxStatus,
-    propSetInt:       proc "c" (properties: OfxPropertySetHandle, property: cstring, index: i32, value: i32) -> OfxStatus,
+PropertySuiteV1 :: struct {
+    propSetPointer:   proc "c" (properties: PropertySetHandle, property: cstring, index: i32, value: rawptr) -> Status,
+    propSetString:    proc "c" (properties: PropertySetHandle, property: cstring, index: i32, value: cstring) -> Status,
+    propSetDouble:    proc "c" (properties: PropertySetHandle, property: cstring, index: i32, value: f64) -> Status,
+    propSetInt:       proc "c" (properties: PropertySetHandle, property: cstring, index: i32, value: i32) -> Status,
 
-    propSetPointerN:  proc "c" (properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^rawptr) -> OfxStatus,
-    propSetStringN:   proc "c" (properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^cstring) -> OfxStatus,
-    propSetDoubleN:   proc "c" (properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^f64) -> OfxStatus,
-    propSetIntN:      proc "c" (properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^i32) -> OfxStatus,
+    propSetPointerN:  proc "c" (properties: PropertySetHandle, property: cstring, count: i32, value: ^rawptr) -> Status,
+    propSetStringN:   proc "c" (properties: PropertySetHandle, property: cstring, count: i32, value: ^cstring) -> Status,
+    propSetDoubleN:   proc "c" (properties: PropertySetHandle, property: cstring, count: i32, value: ^f64) -> Status,
+    propSetIntN:      proc "c" (properties: PropertySetHandle, property: cstring, count: i32, value: ^i32) -> Status,
 
-    propGetPointer:   proc "c" (properties: OfxPropertySetHandle, property: cstring, index: i32, value: ^rawptr) -> OfxStatus,
-    propGetString:    proc "c" (properties: OfxPropertySetHandle, property: cstring, index: i32, value: ^cstring) -> OfxStatus,
-    propGetDouble:    proc "c" (properties: OfxPropertySetHandle, property: cstring, index: i32, value: ^f64) -> OfxStatus,
-    propGetInt:       proc "c" (properties: OfxPropertySetHandle, property: cstring, index: i32, value: ^i32) -> OfxStatus,
+    propGetPointer:   proc "c" (properties: PropertySetHandle, property: cstring, index: i32, value: ^rawptr) -> Status,
+    propGetString:    proc "c" (properties: PropertySetHandle, property: cstring, index: i32, value: ^cstring) -> Status,
+    propGetDouble:    proc "c" (properties: PropertySetHandle, property: cstring, index: i32, value: ^f64) -> Status,
+    propGetInt:       proc "c" (properties: PropertySetHandle, property: cstring, index: i32, value: ^i32) -> Status,
 
-    propGetPointerN:  proc "c" (properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^rawptr) -> OfxStatus,
-    propGetStringN:   proc "c" (properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^cstring) -> OfxStatus,
-    propGetDoubleN:   proc "c" (properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^f64) -> OfxStatus,
-    propGetIntN:      proc "c" (properties: OfxPropertySetHandle, property: cstring, count: i32, value: ^i32) -> OfxStatus,
+    propGetPointerN:  proc "c" (properties: PropertySetHandle, property: cstring, count: i32, value: ^rawptr) -> Status,
+    propGetStringN:   proc "c" (properties: PropertySetHandle, property: cstring, count: i32, value: ^cstring) -> Status,
+    propGetDoubleN:   proc "c" (properties: PropertySetHandle, property: cstring, count: i32, value: ^f64) -> Status,
+    propGetIntN:      proc "c" (properties: PropertySetHandle, property: cstring, count: i32, value: ^i32) -> Status,
 
-    propReset:        proc "c" (properties: OfxPropertySetHandle, property: cstring) -> OfxStatus,
-    propGetDimension: proc "c" (properties: OfxPropertySetHandle, property: cstring, count: ^i32) -> OfxStatus,
+    propReset:        proc "c" (properties: PropertySetHandle, property: cstring) -> Status,
+    propGetDimension: proc "c" (properties: PropertySetHandle, property: cstring, count: ^i32) -> Status,
 }
 
-OfxTimeLineSuiteV1 :: struct {
-    getTime:       proc "c" (instance: rawptr, time: ^f64) -> OfxStatus,
-    gotoTime:      proc "c" (instance: rawptr, time: f64) -> OfxStatus,
-    getTimeBounds: proc "c" (instance: rawptr, firstTime: ^f64, lastTime: ^f64) -> OfxStatus,
+TimeLineSuiteV1 :: struct {
+    getTime:       proc "c" (instance: rawptr, time: ^f64) -> Status,
+    gotoTime:      proc "c" (instance: rawptr, time: f64) -> Status,
+    getTimeBounds: proc "c" (instance: rawptr, firstTime: ^f64, lastTime: ^f64) -> Status,
 }
 
-OfxStandardColour :: enum i32 {
-    kOfxStandardColourOverlayBackground,
-    kOfxStandardColourOverlayActive,
-    kOfxStandardColourOverlaySelected,
-    kOfxStandardColourOverlayDeselected,
-    kOfxStandardColourOverlayMarqueeFG,
-    kOfxStandardColourOverlayMarqueeBG,
-    kOfxStandardColourOverlayText,
+StandardColour :: enum i32 {
+    StandardColourOverlayBackground,
+    StandardColourOverlayActive,
+    StandardColourOverlaySelected,
+    StandardColourOverlayDeselected,
+    StandardColourOverlayMarqueeFG,
+    StandardColourOverlayMarqueeBG,
+    StandardColourOverlayText,
 }
 
-OfxDrawLineStipplePattern :: enum i32 {
-    kOfxDrawLineStipplePatternSolid,
-    kOfxDrawLineStipplePatternDot,
-    kOfxDrawLineStipplePatternDash,
-    kOfxDrawLineStipplePatternAltDash,
-    kOfxDrawLineStipplePatternDotDash,
+DrawLineStipplePattern :: enum i32 {
+    DrawLineStipplePatternSolid,
+    DrawLineStipplePatternDot,
+    DrawLineStipplePatternDash,
+    DrawLineStipplePatternAltDash,
+    DrawLineStipplePatternDotDash,
 }
 
-OfxDrawPrimitive :: enum i32 {
-    kOfxDrawPrimitiveLines,
-    kOfxDrawPrimitiveLineStrip,
-    kOfxDrawPrimitiveLineLoop,
-    kOfxDrawPrimitiveRectangle,
-    kOfxDrawPrimitivePolygon,
-    kOfxDrawPrimitiveEllipse
+DrawPrimitive :: enum i32 {
+    DrawPrimitiveLines,
+    DrawPrimitiveLineStrip,
+    DrawPrimitiveLineLoop,
+    DrawPrimitiveRectangle,
+    DrawPrimitivePolygon,
+    DrawPrimitiveEllipse
 }
 
-OfxDrawTextAlignment :: enum i32 {
-    kOfxDrawTextAlignmentLeft     = 0x0001,
-    kOfxDrawTextAlignmentRight    = 0x0002,
-    kOfxDrawTextAlignmentTop      = 0x0004,
-    kOfxDrawTextAlignmentBottom   = 0x0008,
-    kOfxDrawTextAlignmentBaseline = 0x0010,
-    kOfxDrawTextAlignmentCenterH  = (kOfxDrawTextAlignmentLeft | kOfxDrawTextAlignmentRight),
-    kOfxDrawTextAlignmentCenterV  = (kOfxDrawTextAlignmentTop | kOfxDrawTextAlignmentBaseline),
+DrawTextAlignment :: enum i32 {
+    DrawTextAlignmentLeft     = 0x0001,
+    DrawTextAlignmentRight    = 0x0002,
+    DrawTextAlignmentTop      = 0x0004,
+    DrawTextAlignmentBottom   = 0x0008,
+    DrawTextAlignmentBaseline = 0x0010,
+    DrawTextAlignmentCenterH  = (DrawTextAlignmentLeft | DrawTextAlignmentRight),
+    DrawTextAlignmentCenterV  = (DrawTextAlignmentTop | DrawTextAlignmentBaseline),
 }
 
-kOfxFlagInfiniteMax :: c.INT32_MAX
-kOfxFlagInfiniteMin :: c.INT32_MIN
+FlagInfiniteMax :: c.INT32_MAX
+FlagInfiniteMin :: c.INT32_MIN
 
-kOfxStatOK                    : i32 : 0
-kOfxStatFailed                : i32 : 1
-kOfxStatErrFatal              : i32 : 2
-kOfxStatErrUnknown            : i32 : 3
-kOfxStatErrMissingHostFeature : i32 : 4
-kOfxStatErrUnsupported        : i32 : 5
-kOfxStatErrExists             : i32 : 6
-kOfxStatErrFormat             : i32 : 7
-kOfxStatErrMemory             : i32 : 8
-kOfxStatErrBadHandle          : i32 : 9
-kOfxStatErrBadIndex           : i32 : 10
-kOfxStatErrValue              : i32 : 11
-kOfxStatReplyYes              : i32 : 12
-kOfxStatReplyNo               : i32 : 13
-kOfxStatReplyDefault          : i32 : 14
-kOfxStatErrImageFormat        : i32 : 1000
-kOfxStatGPUOutOfMemory        : i32 : 1001
-kOfxStatGLOutOfMemory         : i32 : 1001
-kOfxStatGPURenderFailed       : i32 : 1002
-kOfxStatGLRenderFailed        : i32 : 1002
+StatOK                    : i32 : 0
+StatFailed                : i32 : 1
+StatErrFatal              : i32 : 2
+StatErrUnknown            : i32 : 3
+StatErrMissingHostFeature : i32 : 4
+StatErrUnsupported        : i32 : 5
+StatErrExists             : i32 : 6
+StatErrFormat             : i32 : 7
+StatErrMemory             : i32 : 8
+StatErrBadHandle          : i32 : 9
+StatErrBadIndex           : i32 : 10
+StatErrValue              : i32 : 11
+StatReplyYes              : i32 : 12
+StatReplyNo               : i32 : 13
+StatReplyDefault          : i32 : 14
+StatErrImageFormat        : i32 : 1000
+StatGPUOutOfMemory        : i32 : 1001
+StatGLOutOfMemory         : i32 : 1001
+StatGPURenderFailed       : i32 : 1002
+StatGLRenderFailed        : i32 : 1002
 
-kOfxDialogSuite                                     : cstring : "OfxDialogSuite"
-kOfxDrawSuite                                       : cstring : "OfxDrawSuite"
-kOfxInteractSuite                                   : cstring : "OfxInteractSuite"
-kOfxMemorySuite                                     : cstring : "OfxMemorySuite"
-kOfxMessageSuite                                    : cstring : "OfxMessageSuite"
-kOfxMultiThreadSuite                                : cstring : "OfxMultiThreadSuite"
-kOfxProgressSuite                                   : cstring : "OfxProgressSuite"
-kOfxPropertySuite                                   : cstring : "OfxPropertySuite"
-kOfxTimeLineSuite                                   : cstring : "OfxTimeLineSuite"
-kOfxParameterSuite                                  : cstring : "OfxParameterSuite"
-kOfxParametricParameterSuite                        : cstring : "OfxParametricParameterSuite"
-kOfxOpenGLRenderSuite                               : cstring : "OfxImageEffectOpenGLRenderSuite"
-kOfxImageEffectSuite                                : cstring : "OfxImageEffectSuite"
+DialogSuite                                     : cstring : "OfxDialogSuite"
+DrawSuite                                       : cstring : "OfxDrawSuite"
+InteractSuite                                   : cstring : "OfxInteractSuite"
+MemorySuite                                     : cstring : "OfxMemorySuite"
+MessageSuite                                    : cstring : "OfxMessageSuite"
+MultiThreadSuite                                : cstring : "OfxMultiThreadSuite"
+ProgressSuite                                   : cstring : "OfxProgressSuite"
+PropertySuite                                   : cstring : "OfxPropertySuite"
+TimeLineSuite                                   : cstring : "OfxTimeLineSuite"
+ParameterSuite                                  : cstring : "OfxParameterSuite"
+ParametricParameterSuite                        : cstring : "OfxParametricParameterSuite"
+OpenGLRenderSuite                               : cstring : "OfxImageEffectOpenGLRenderSuite"
+ImageEffectSuite                                : cstring : "OfxImageEffectSuite"
 
-kOfxPropAPIVersion                                  : cstring : "OfxPropAPIVersion"
-kOfxPropTime                                        : cstring : "OfxPropTime"
-kOfxPropIsInteractive                               : cstring : "OfxPropIsInteractive"
-kOfxPropInstanceData                                : cstring : "OfxPropInstanceData"
-kOfxPropType                                        : cstring : "OfxPropType"
-kOfxPropName                                        : cstring : "OfxPropName"
-kOfxPropVersion                                     : cstring : "OfxPropVersion"
-kOfxPropVersionLabel                                : cstring : "OfxPropVersionLabel"
-kOfxPropPluginDescription                           : cstring : "OfxPropPluginDescription"
-kOfxPropLabel                                       : cstring : "OfxPropLabel"
-kOfxPropIcon                                        : cstring : "OfxPropIcon"
-kOfxPropShortLabel                                  : cstring : "OfxPropShortLabel"
-kOfxPropLongLabel                                   : cstring : "OfxPropLongLabel"
-kOfxPropChangeReason                                : cstring : "OfxPropChangeReason"
-kOfxPropEffectInstance                              : cstring : "OfxPropEffectInstance"
-kOfxPropHostOSHandle                                : cstring : "OfxPropHostOSHandle"
-kOfxPropKeySym                                      : cstring : "kOfxPropKeySym"
-kOfxPropKeyString                                   : cstring : "kOfxPropKeyString"
-kOfxPropParamSetNeedsSyncing                        : cstring : "OfxPropParamSetNeedsSyncing"
+PropAPIVersion                                  : cstring : "OfxPropAPIVersion"
+PropTime                                        : cstring : "OfxPropTime"
+PropIsInteractive                               : cstring : "OfxPropIsInteractive"
+PropInstanceData                                : cstring : "OfxPropInstanceData"
+PropType                                        : cstring : "OfxPropType"
+PropName                                        : cstring : "OfxPropName"
+PropVersion                                     : cstring : "OfxPropVersion"
+PropVersionLabel                                : cstring : "OfxPropVersionLabel"
+PropPluginDescription                           : cstring : "OfxPropPluginDescription"
+PropLabel                                       : cstring : "OfxPropLabel"
+PropIcon                                        : cstring : "OfxPropIcon"
+PropShortLabel                                  : cstring : "OfxPropShortLabel"
+PropLongLabel                                   : cstring : "OfxPropLongLabel"
+PropChangeReason                                : cstring : "OfxPropChangeReason"
+PropEffectInstance                              : cstring : "OfxPropEffectInstance"
+PropHostOSHandle                                : cstring : "OfxPropHostOSHandle"
+PropKeySym                                      : cstring : "kOfxPropKeySym"
+PropKeyString                                   : cstring : "kOfxPropKeyString"
+PropParamSetNeedsSyncing                        : cstring : "OfxPropParamSetNeedsSyncing"
 
-kOfxHostNativeOriginBottomLeft                      : cstring : "kOfxImageEffectHostPropNativeOriginBottomLeft"
-kOfxHostNativeOriginTopLeft                         : cstring : "kOfxImageEffectHostPropNativeOriginTopLeft"
-kOfxHostNativeOriginCenter                          : cstring : "kOfxImageEffectHostPropNativeOriginCenter"
+HostNativeOriginBottomLeft                      : cstring : "kOfxImageEffectHostPropNativeOriginBottomLeft"
+HostNativeOriginTopLeft                         : cstring : "kOfxImageEffectHostPropNativeOriginTopLeft"
+HostNativeOriginCenter                          : cstring : "kOfxImageEffectHostPropNativeOriginCenter"
 
-kOfxPluginPropFilePath                              : cstring : "OfxPluginPropFilePath"
-kOfxPluginPropParamPageOrder                        : cstring : "OfxPluginPropParamPageOrder"
+PluginPropFilePath                              : cstring : "OfxPluginPropFilePath"
+PluginPropParamPageOrder                        : cstring : "OfxPluginPropParamPageOrder"
 
-kOfxChangeUserEdited                                : cstring : "OfxChangeUserEdited"
-kOfxChangePluginEdited                              : cstring : "OfxChangePluginEdited"
-kOfxChangeTime                                      : cstring : "OfxChangeTime"
+ChangeUserEdited                                : cstring : "OfxChangeUserEdited"
+ChangePluginEdited                              : cstring : "OfxChangePluginEdited"
+ChangeTime                                      : cstring : "OfxChangeTime"
 
-kOfxTypeImageEffectHost                             : cstring : "OfxTypeImageEffectHost"
-kOfxTypeImageEffect                                 : cstring : "OfxTypeImageEffect"
-kOfxTypeImageEffectInstance                         : cstring : "OfxTypeImageEffectInstance"
-kOfxTypeClip                                        : cstring : "OfxTypeClip"
-kOfxTypeImage                                       : cstring : "OfxTypeImage"
-kOfxTypeParameter                                   : cstring : "OfxTypeParameter"
-kOfxTypeParameterInstance                           : cstring : "OfxTypeParameterInstance"
+TypeImageEffectHost                             : cstring : "OfxTypeImageEffectHost"
+TypeImageEffect                                 : cstring : "OfxTypeImageEffect"
+TypeImageEffectInstance                         : cstring : "OfxTypeImageEffectInstance"
+TypeClip                                        : cstring : "OfxTypeClip"
+TypeImage                                       : cstring : "OfxTypeImage"
+TypeParameter                                   : cstring : "OfxTypeParameter"
+TypeParameterInstance                           : cstring : "OfxTypeParameterInstance"
 
-kOfxBitDepthNone                                    : cstring : "OfxBitDepthNone"
-kOfxBitDepthByte                                    : cstring : "OfxBitDepthByte"
-kOfxBitDepthShort                                   : cstring : "OfxBitDepthShort"
-kOfxBitDepthHalf                                    : cstring : "OfxBitDepthHalf"
-kOfxBitDepthFloat                                   : cstring : "OfxBitDepthFloat"
+BitDepthNone                                    : cstring : "OfxBitDepthNone"
+BitDepthByte                                    : cstring : "OfxBitDepthByte"
+BitDepthShort                                   : cstring : "OfxBitDepthShort"
+BitDepthHalf                                    : cstring : "OfxBitDepthHalf"
+BitDepthFloat                                   : cstring : "OfxBitDepthFloat"
 
-kOfxImageComponentNone                              : cstring : "OfxImageComponentNone"
-kOfxImageComponentRGBA                              : cstring : "OfxImageComponentRGBA"
-kOfxImageComponentRGB                               : cstring : "OfxImageComponentRGB"
-kOfxImageComponentAlpha                             : cstring : "OfxImageComponentAlpha"
-kOfxImageComponentYUVA                              : cstring : "OfxImageComponentYUVA"
+ImageComponentNone                              : cstring : "OfxImageComponentNone"
+ImageComponentRGBA                              : cstring : "OfxImageComponentRGBA"
+ImageComponentRGB                               : cstring : "OfxImageComponentRGB"
+ImageComponentAlpha                             : cstring : "OfxImageComponentAlpha"
+ImageComponentYUVA                              : cstring : "OfxImageComponentYUVA"
 
-kOfxImageOpaque                                     : cstring : "OfxImageOpaque"
-kOfxImagePreMultiplied                              : cstring : "OfxImageAlphaPremultiplied"
-kOfxImageUnPreMultiplied                            : cstring : "OfxImageAlphaUnPremultiplied"
+ImageOpaque                                     : cstring : "OfxImageOpaque"
+ImagePreMultiplied                              : cstring : "OfxImageAlphaPremultiplied"
+ImageUnPreMultiplied                            : cstring : "OfxImageAlphaUnPremultiplied"
 
-kOfxImageFieldNone                                  : cstring : "OfxFieldNone"
-kOfxImageFieldLower                                 : cstring : "OfxFieldLower"
-kOfxImageFieldUpper                                 : cstring : "OfxFieldUpper"
-kOfxImageFieldBoth                                  : cstring : "OfxFieldBoth"
-kOfxImageFieldSingle                                : cstring : "OfxFieldSingle"
-kOfxImageFieldDoubled                               : cstring : "OfxFieldDoubled"
+ImageFieldNone                                  : cstring : "OfxFieldNone"
+ImageFieldLower                                 : cstring : "OfxFieldLower"
+ImageFieldUpper                                 : cstring : "OfxFieldUpper"
+ImageFieldBoth                                  : cstring : "OfxFieldBoth"
+ImageFieldSingle                                : cstring : "OfxFieldSingle"
+ImageFieldDoubled                               : cstring : "OfxFieldDoubled"
 
-kOfxImagePropUniqueIdentifier                       : cstring : "OfxImagePropUniqueIdentifier"
-kOfxImagePropPixelAspectRatio                       : cstring : "OfxImagePropPixelAspectRatio"
-kOfxImagePropData                                   : cstring : "OfxImagePropData"
-kOfxImagePropBounds                                 : cstring : "OfxImagePropBounds"
-kOfxImagePropRegionOfDefinition                     : cstring : "OfxImagePropRegionOfDefinition"
-kOfxImagePropRowBytes                               : cstring : "OfxImagePropRowBytes"
-kOfxImagePropField                                  : cstring : "OfxImagePropField"
+ImagePropUniqueIdentifier                       : cstring : "OfxImagePropUniqueIdentifier"
+ImagePropPixelAspectRatio                       : cstring : "OfxImagePropPixelAspectRatio"
+ImagePropData                                   : cstring : "OfxImagePropData"
+ImagePropBounds                                 : cstring : "OfxImagePropBounds"
+ImagePropRegionOfDefinition                     : cstring : "OfxImagePropRegionOfDefinition"
+ImagePropRowBytes                               : cstring : "OfxImagePropRowBytes"
+ImagePropField                                  : cstring : "OfxImagePropField"
 
-kOfxImageClipPropFieldExtraction                    : cstring : "OfxImageClipPropFieldExtraction"
-kOfxImageClipPropContinuousSamples                  : cstring : "OfxImageClipPropContinuousSamples"
-kOfxImageClipPropUnmappedPixelDepth                 : cstring : "OfxImageClipPropUnmappedPixelDepth"
-kOfxImageClipPropUnmappedComponents                 : cstring : "OfxImageClipPropUnmappedComponents"
-kOfxImageClipPropOptional                           : cstring : "OfxImageClipPropOptional"
-kOfxImageClipPropIsMask                             : cstring : "OfxImageClipPropIsMask"
-kOfxImageClipPropConnected                          : cstring : "OfxImageClipPropConnected"
-kOfxImageClipPropFieldOrder                         : cstring : "OfxImageClipPropFieldOrder"
+ImageClipPropFieldExtraction                    : cstring : "OfxImageClipPropFieldExtraction"
+ImageClipPropContinuousSamples                  : cstring : "OfxImageClipPropContinuousSamples"
+ImageClipPropUnmappedPixelDepth                 : cstring : "OfxImageClipPropUnmappedPixelDepth"
+ImageClipPropUnmappedComponents                 : cstring : "OfxImageClipPropUnmappedComponents"
+ImageClipPropOptional                           : cstring : "OfxImageClipPropOptional"
+ImageClipPropIsMask                             : cstring : "OfxImageClipPropIsMask"
+ImageClipPropConnected                          : cstring : "OfxImageClipPropConnected"
+ImageClipPropFieldOrder                         : cstring : "OfxImageClipPropFieldOrder"
 
-kOfxActionLoad                                      : cstring : "OfxActionLoad"
-kOfxActionDescribe                                  : cstring : "OfxActionDescribe"
-kOfxActionUnload                                    : cstring : "OfxActionUnload"
-kOfxActionPurgeCaches                               : cstring : "OfxActionPurgeCaches"
-kOfxActionSyncPrivateData                           : cstring : "OfxActionSyncPrivateData"
-kOfxActionCreateInstance                            : cstring : "OfxActionCreateInstance"
-kOfxActionDestroyInstance                           : cstring : "OfxActionDestroyInstance"
-kOfxActionInstanceChanged                           : cstring : "OfxActionInstanceChanged"
-kOfxActionBeginInstanceChanged                      : cstring : "OfxActionBeginInstanceChanged"
-kOfxActionEndInstanceChanged                        : cstring : "OfxActionEndInstanceChanged"
-kOfxActionBeginInstanceEdit                         : cstring : "OfxActionBeginInstanceEdit"
-kOfxActionEndInstanceEdit                           : cstring : "OfxActionEndInstanceEdit"
-kOfxActionDialog                                    : cstring : "OfxActionDialog"
-kOfxActionOpenGLContextAttached                     : cstring : "OfxActionOpenGLContextAttached"
-kOfxActionOpenGLContextDetached                     : cstring : "kOfxActionOpenGLContextDetached"
-kOfxActionDescribeInteract                          : cstring : kOfxActionDescribe
-kOfxActionCreateInstanceInteract                    : cstring : kOfxActionCreateInstance
-kOfxActionDestroyInstanceInteract                   : cstring : kOfxActionDestroyInstance
+ActionLoad                                      : cstring : "OfxActionLoad"
+ActionDescribe                                  : cstring : "OfxActionDescribe"
+ActionUnload                                    : cstring : "OfxActionUnload"
+ActionPurgeCaches                               : cstring : "OfxActionPurgeCaches"
+ActionSyncPrivateData                           : cstring : "OfxActionSyncPrivateData"
+ActionCreateInstance                            : cstring : "OfxActionCreateInstance"
+ActionDestroyInstance                           : cstring : "OfxActionDestroyInstance"
+ActionInstanceChanged                           : cstring : "OfxActionInstanceChanged"
+ActionBeginInstanceChanged                      : cstring : "OfxActionBeginInstanceChanged"
+ActionEndInstanceChanged                        : cstring : "OfxActionEndInstanceChanged"
+ActionBeginInstanceEdit                         : cstring : "OfxActionBeginInstanceEdit"
+ActionEndInstanceEdit                           : cstring : "OfxActionEndInstanceEdit"
+ActionDialog                                    : cstring : "OfxActionDialog"
+ActionOpenGLContextAttached                     : cstring : "OfxActionOpenGLContextAttached"
+ActionOpenGLContextDetached                     : cstring : "kOfxActionOpenGLContextDetached"
+ActionDescribeInteract                          : cstring : ActionDescribe
+ActionCreateInstanceInteract                    : cstring : ActionCreateInstance
+ActionDestroyInstanceInteract                   : cstring : ActionDestroyInstance
 
-kOfxImageEffectActionGetRegionOfDefinition          : cstring : "OfxImageEffectActionGetRegionOfDefinition"
-kOfxImageEffectActionGetRegionsOfInterest           : cstring : "OfxImageEffectActionGetRegionsOfInterest"
-kOfxImageEffectActionGetTimeDomain                  : cstring : "OfxImageEffectActionGetTimeDomain"
-kOfxImageEffectActionGetFramesNeeded                : cstring : "OfxImageEffectActionGetFramesNeeded"
-kOfxImageEffectActionGetClipPreferences             : cstring : "OfxImageEffectActionGetClipPreferences"
-kOfxImageEffectActionIsIdentity                     : cstring : "OfxImageEffectActionIsIdentity"
-kOfxImageEffectActionRender                         : cstring : "OfxImageEffectActionRender"
-kOfxImageEffectActionBeginSequenceRender            : cstring : "OfxImageEffectActionBeginSequenceRender"
-kOfxImageEffectActionEndSequenceRender              : cstring : "OfxImageEffectActionEndSequenceRender"
-kOfxImageEffectActionDescribeInContext              : cstring : "OfxImageEffectActionDescribeInContext"
+ImageEffectActionGetRegionOfDefinition          : cstring : "OfxImageEffectActionGetRegionOfDefinition"
+ImageEffectActionGetRegionsOfInterest           : cstring : "OfxImageEffectActionGetRegionsOfInterest"
+ImageEffectActionGetTimeDomain                  : cstring : "OfxImageEffectActionGetTimeDomain"
+ImageEffectActionGetFramesNeeded                : cstring : "OfxImageEffectActionGetFramesNeeded"
+ImageEffectActionGetClipPreferences             : cstring : "OfxImageEffectActionGetClipPreferences"
+ImageEffectActionIsIdentity                     : cstring : "OfxImageEffectActionIsIdentity"
+ImageEffectActionRender                         : cstring : "OfxImageEffectActionRender"
+ImageEffectActionBeginSequenceRender            : cstring : "OfxImageEffectActionBeginSequenceRender"
+ImageEffectActionEndSequenceRender              : cstring : "OfxImageEffectActionEndSequenceRender"
+ImageEffectActionDescribeInContext              : cstring : "OfxImageEffectActionDescribeInContext"
 
-kOfxImageEffectContextGenerator                     : cstring : "OfxImageEffectContextGenerator"
-kOfxImageEffectContextFilter                        : cstring : "OfxImageEffectContextFilter"
-kOfxImageEffectContextTransition                    : cstring : "OfxImageEffectContextTransition"
-kOfxImageEffectContextPaint                         : cstring : "OfxImageEffectContextPaint"
-kOfxImageEffectContextGeneral                       : cstring : "OfxImageEffectContextGeneral"
-kOfxImageEffectContextRetimer                       : cstring : "OfxImageEffectContextRetimer"
+ImageEffectContextGenerator                     : cstring : "OfxImageEffectContextGenerator"
+ImageEffectContextFilter                        : cstring : "OfxImageEffectContextFilter"
+ImageEffectContextTransition                    : cstring : "OfxImageEffectContextTransition"
+ImageEffectContextPaint                         : cstring : "OfxImageEffectContextPaint"
+ImageEffectContextGeneral                       : cstring : "OfxImageEffectContextGeneral"
+ImageEffectContextRetimer                       : cstring : "OfxImageEffectContextRetimer"
 
-kOfxImageEffectHostPropIsBackground                 : cstring : "OfxImageEffectHostPropIsBackground"
-kOfxImageEffectHostPropNativeOrigin                 : cstring : "OfxImageEffectHostPropNativeOrigin"
+ImageEffectHostPropIsBackground                 : cstring : "OfxImageEffectHostPropIsBackground"
+ImageEffectHostPropNativeOrigin                 : cstring : "OfxImageEffectHostPropNativeOrigin"
 
-kOfxImageEffectRenderUnsafe                         : cstring : "OfxImageEffectRenderUnsafe"
-kOfxImageEffectRenderInstanceSafe                   : cstring : "OfxImageEffectRenderInstanceSafe"
-kOfxImageEffectRenderFullySafe                      : cstring : "OfxImageEffectRenderFullySafe"
+ImageEffectRenderUnsafe                         : cstring : "OfxImageEffectRenderUnsafe"
+ImageEffectRenderInstanceSafe                   : cstring : "OfxImageEffectRenderInstanceSafe"
+ImageEffectRenderFullySafe                      : cstring : "OfxImageEffectRenderFullySafe"
 
-kOfxImageEffectFrameVarying                         : cstring : "OfxImageEffectFrameVarying"
+ImageEffectFrameVarying                         : cstring : "OfxImageEffectFrameVarying"
 
-kOfxImageEffectPluginApi                            : cstring : "OfxImageEffectPluginAPI"
-kOfxImageEffectPluginApiVersion                     : i32     : 1
-kOfxImageEffectPluginRenderThreadSafety             : cstring : "OfxImageEffectPluginRenderThreadSafety"
+ImageEffectPluginApi                            : cstring : "OfxImageEffectPluginAPI"
+ImageEffectPluginApiVersion                     : i32     : 1
+ImageEffectPluginRenderThreadSafety             : cstring : "OfxImageEffectPluginRenderThreadSafety"
 
-kOfxImageEffectPluginPropSingleInstance             : cstring : "OfxImageEffectPluginPropSingleInstance"
-kOfxImageEffectPluginPropHostFrameThreading         : cstring : "OfxImageEffectPluginPropHostFrameThreading"
-kOfxImageEffectPluginPropGrouping                   : cstring : "OfxImageEffectPluginPropGrouping"
-kOfxImageEffectPluginPropOverlayInteractV1          : cstring : "OfxImageEffectPluginPropOverlayInteractV1"
-kOfxImageEffectPluginPropOverlayInteractV2          : cstring : "OfxImageEffectPluginPropOverlayInteractV2"
-kOfxImageEffectPluginPropFieldRenderTwiceAlways     : cstring : "OfxImageEffectPluginPropFieldRenderTwiceAlways"
+ImageEffectPluginPropSingleInstance             : cstring : "OfxImageEffectPluginPropSingleInstance"
+ImageEffectPluginPropHostFrameThreading         : cstring : "OfxImageEffectPluginPropHostFrameThreading"
+ImageEffectPluginPropGrouping                   : cstring : "OfxImageEffectPluginPropGrouping"
+ImageEffectPluginPropOverlayInteractV1          : cstring : "OfxImageEffectPluginPropOverlayInteractV1"
+ImageEffectPluginPropOverlayInteractV2          : cstring : "OfxImageEffectPluginPropOverlayInteractV2"
+ImageEffectPluginPropFieldRenderTwiceAlways     : cstring : "OfxImageEffectPluginPropFieldRenderTwiceAlways"
 
-kOfxImageEffectInstancePropSequentialRender         : cstring : "OfxImageEffectInstancePropSequentialRender"
-kOfxImageEffectInstancePropEffectDuration           : cstring : "OfxImageEffectInstancePropEffectDuration"
+ImageEffectInstancePropSequentialRender         : cstring : "OfxImageEffectInstancePropSequentialRender"
+ImageEffectInstancePropEffectDuration           : cstring : "OfxImageEffectInstancePropEffectDuration"
 
-kOfxImageEffectOutputClipName                       : cstring : "Output"
-kOfxImageEffectSimpleSourceClipName                 : cstring : "Source"
-kOfxImageEffectTransitionSourceFromClipName         : cstring : "SourceFrom"
-kOfxImageEffectTransitionSourceToClipName           : cstring : "SourceTo"
-kOfxImageEffectTransitionParamName                  : cstring : "Transition"
-kOfxImageEffectRetimerParamName                     : cstring : "SourceTime"
+ImageEffectOutputClipName                       : cstring : "Output"
+ImageEffectSimpleSourceClipName                 : cstring : "Source"
+ImageEffectTransitionSourceFromClipName         : cstring : "SourceFrom"
+ImageEffectTransitionSourceToClipName           : cstring : "SourceTo"
+ImageEffectTransitionParamName                  : cstring : "Transition"
+ImageEffectRetimerParamName                     : cstring : "SourceTime"
 
-kOfxImageEffectPropSupportedContexts                : cstring : "OfxImageEffectPropSupportedContexts"
-kOfxImageEffectPropPluginHandle                     : cstring : "OfxImageEffectPropPluginHandle"
-kOfxImageEffectPropSupportsMultipleClipDepths       : cstring : "OfxImageEffectPropMultipleClipDepths"
-kOfxImageEffectPropSupportsMultipleClipPARs         : cstring : "OfxImageEffectPropSupportsMultipleClipPARs"
-kOfxImageEffectPropClipPreferencesSlaveParam        : cstring : "OfxImageEffectPropClipPreferencesSlaveParam"
-kOfxImageEffectPropSetableFrameRate                 : cstring : "OfxImageEffectPropSetableFrameRate"
-kOfxImageEffectPropSetableFielding                  : cstring : "OfxImageEffectPropSetableFielding"
-kOfxImageEffectPropSequentialRenderStatus           : cstring : "OfxImageEffectPropSequentialRenderStatus"
-kOfxImageEffectPropInteractiveRenderStatus          : cstring : "OfxImageEffectPropInteractiveRenderStatus"
-kOfxImageEffectPropSupportsOverlays                 : cstring : "OfxImageEffectPropSupportsOverlays"
-kOfxImageEffectPropSupportsMultiResolution          : cstring : "OfxImageEffectPropSupportsMultiResolution"
-kOfxImageEffectPropSupportsTiles                    : cstring : "OfxImageEffectPropSupportsTiles"
-kOfxImageEffectPropTemporalClipAccess               : cstring : "OfxImageEffectPropTemporalClipAccess"
-kOfxImageEffectPropContext                          : cstring : "OfxImageEffectPropContext"
-kOfxImageEffectPropPixelDepth                       : cstring : "OfxImageEffectPropPixelDepth"
-kOfxImageEffectPropComponents                       : cstring : "OfxImageEffectPropComponents"
-kOfxImageEffectPropPreMultiplication                : cstring : "OfxImageEffectPropPreMultiplication"
-kOfxImageEffectPropSupportedPixelDepths             : cstring : "OfxImageEffectPropSupportedPixelDepths"
-kOfxImageEffectPropSupportedComponents              : cstring : "OfxImageEffectPropSupportedComponents"
-kOfxImageEffectPropFrameRate                        : cstring : "OfxImageEffectPropFrameRate"
-kOfxImageEffectPropUnmappedFrameRate                : cstring : "OfxImageEffectPropUnmappedFrameRate"
-kOfxImageEffectPropFrameStep                        : cstring : "OfxImageEffectPropFrameStep"
-kOfxImageEffectPropFrameRange                       : cstring : "OfxImageEffectPropFrameRange"
-kOfxImageEffectPropUnmappedFrameRange               : cstring : "OfxImageEffectPropUnmappedFrameRange"
-kOfxImageEffectPropRenderScale                      : cstring : "OfxImageEffectPropRenderScale"
-kOfxImageEffectPropRenderQualityDraft               : cstring : "OfxImageEffectPropRenderQualityDraft"
-kOfxImageEffectPropProjectExtent                    : cstring : "OfxImageEffectPropProjectExtent"
-kOfxImageEffectPropProjectSize                      : cstring : "OfxImageEffectPropProjectSize"
-kOfxImageEffectPropProjectOffset                    : cstring : "OfxImageEffectPropProjectOffset"
-kOfxImageEffectPropProjectPixelAspectRatio          : cstring : "OfxImageEffectPropPixelAspectRatio"
-kOfxImageEffectPropFieldToRender                    : cstring : "OfxImageEffectPropFieldToRender"
-kOfxImageEffectPropRegionOfDefinition               : cstring : "OfxImageEffectPropRegionOfDefinition"
-kOfxImageEffectPropRegionOfInterest                 : cstring : "OfxImageEffectPropRegionOfInterest"
-kOfxImageEffectPropRenderWindow                     : cstring : "OfxImageEffectPropRenderWindow"
-kOfxImageEffectPropOpenGLRenderSupported            : cstring : "OfxImageEffectPropOpenGLRenderSupported"
-kOfxImageEffectPropOpenGLEnabled                    : cstring : "OfxImageEffectPropOpenGLEnabled"
-kOfxImageEffectPropOpenGLTextureIndex               : cstring : "OfxImageEffectPropOpenGLTextureIndex"
-kOfxImageEffectPropOpenGLTextureTarget              : cstring : "OfxImageEffectPropOpenGLTextureTarget"
-kOfxImageEffectPropInAnalysis                       : cstring : "OfxImageEffectPropInAnalysis"
-kOfxImageEffectPropCudaRenderSupported              : cstring : "OfxImageEffectPropCudaRenderSupported"
-kOfxImageEffectPropCudaEnabled                      : cstring : "OfxImageEffectPropCudaEnabled"
-kOfxImageEffectPropCudaStreamSupported              : cstring : "OfxImageEffectPropCudaStreamSupported"
-kOfxImageEffectPropCudaStream                       : cstring : "OfxImageEffectPropCudaStream"
-kOfxImageEffectPropMetalRenderSupported             : cstring : "OfxImageEffectPropMetalRenderSupported"
-kOfxImageEffectPropMetalEnabled                     : cstring : "OfxImageEffectPropMetalEnabled"
-kOfxImageEffectPropMetalCommandQueue                : cstring : "OfxImageEffectPropMetalCommandQueue"
-kOfxImageEffectPropOpenCLRenderSupported            : cstring : "OfxImageEffectPropOpenCLRenderSupported"
-kOfxImageEffectPropOpenCLEnabled                    : cstring : "OfxImageEffectPropOpenCLEnabled"
-kOfxImageEffectPropOpenCLCommandQueue               : cstring : "OfxImageEffectPropOpenCLCommandQueue"
+ImageEffectPropSupportedContexts                : cstring : "OfxImageEffectPropSupportedContexts"
+ImageEffectPropPluginHandle                     : cstring : "OfxImageEffectPropPluginHandle"
+ImageEffectPropSupportsMultipleClipDepths       : cstring : "OfxImageEffectPropMultipleClipDepths"
+ImageEffectPropSupportsMultipleClipPARs         : cstring : "OfxImageEffectPropSupportsMultipleClipPARs"
+ImageEffectPropClipPreferencesSlaveParam        : cstring : "OfxImageEffectPropClipPreferencesSlaveParam"
+ImageEffectPropSetableFrameRate                 : cstring : "OfxImageEffectPropSetableFrameRate"
+ImageEffectPropSetableFielding                  : cstring : "OfxImageEffectPropSetableFielding"
+ImageEffectPropSequentialRenderStatus           : cstring : "OfxImageEffectPropSequentialRenderStatus"
+ImageEffectPropInteractiveRenderStatus          : cstring : "OfxImageEffectPropInteractiveRenderStatus"
+ImageEffectPropSupportsOverlays                 : cstring : "OfxImageEffectPropSupportsOverlays"
+ImageEffectPropSupportsMultiResolution          : cstring : "OfxImageEffectPropSupportsMultiResolution"
+ImageEffectPropSupportsTiles                    : cstring : "OfxImageEffectPropSupportsTiles"
+ImageEffectPropTemporalClipAccess               : cstring : "OfxImageEffectPropTemporalClipAccess"
+ImageEffectPropContext                          : cstring : "OfxImageEffectPropContext"
+ImageEffectPropPixelDepth                       : cstring : "OfxImageEffectPropPixelDepth"
+ImageEffectPropComponents                       : cstring : "OfxImageEffectPropComponents"
+ImageEffectPropPreMultiplication                : cstring : "OfxImageEffectPropPreMultiplication"
+ImageEffectPropSupportedPixelDepths             : cstring : "OfxImageEffectPropSupportedPixelDepths"
+ImageEffectPropSupportedComponents              : cstring : "OfxImageEffectPropSupportedComponents"
+ImageEffectPropFrameRate                        : cstring : "OfxImageEffectPropFrameRate"
+ImageEffectPropUnmappedFrameRate                : cstring : "OfxImageEffectPropUnmappedFrameRate"
+ImageEffectPropFrameStep                        : cstring : "OfxImageEffectPropFrameStep"
+ImageEffectPropFrameRange                       : cstring : "OfxImageEffectPropFrameRange"
+ImageEffectPropUnmappedFrameRange               : cstring : "OfxImageEffectPropUnmappedFrameRange"
+ImageEffectPropRenderScale                      : cstring : "OfxImageEffectPropRenderScale"
+ImageEffectPropRenderQualityDraft               : cstring : "OfxImageEffectPropRenderQualityDraft"
+ImageEffectPropProjectExtent                    : cstring : "OfxImageEffectPropProjectExtent"
+ImageEffectPropProjectSize                      : cstring : "OfxImageEffectPropProjectSize"
+ImageEffectPropProjectOffset                    : cstring : "OfxImageEffectPropProjectOffset"
+ImageEffectPropProjectPixelAspectRatio          : cstring : "OfxImageEffectPropPixelAspectRatio"
+ImageEffectPropFieldToRender                    : cstring : "OfxImageEffectPropFieldToRender"
+ImageEffectPropRegionOfDefinition               : cstring : "OfxImageEffectPropRegionOfDefinition"
+ImageEffectPropRegionOfInterest                 : cstring : "OfxImageEffectPropRegionOfInterest"
+ImageEffectPropRenderWindow                     : cstring : "OfxImageEffectPropRenderWindow"
+ImageEffectPropOpenGLRenderSupported            : cstring : "OfxImageEffectPropOpenGLRenderSupported"
+ImageEffectPropOpenGLEnabled                    : cstring : "OfxImageEffectPropOpenGLEnabled"
+ImageEffectPropOpenGLTextureIndex               : cstring : "OfxImageEffectPropOpenGLTextureIndex"
+ImageEffectPropOpenGLTextureTarget              : cstring : "OfxImageEffectPropOpenGLTextureTarget"
+ImageEffectPropInAnalysis                       : cstring : "OfxImageEffectPropInAnalysis"
+ImageEffectPropCudaRenderSupported              : cstring : "OfxImageEffectPropCudaRenderSupported"
+ImageEffectPropCudaEnabled                      : cstring : "OfxImageEffectPropCudaEnabled"
+ImageEffectPropCudaStreamSupported              : cstring : "OfxImageEffectPropCudaStreamSupported"
+ImageEffectPropCudaStream                       : cstring : "OfxImageEffectPropCudaStream"
+ImageEffectPropMetalRenderSupported             : cstring : "OfxImageEffectPropMetalRenderSupported"
+ImageEffectPropMetalEnabled                     : cstring : "OfxImageEffectPropMetalEnabled"
+ImageEffectPropMetalCommandQueue                : cstring : "OfxImageEffectPropMetalCommandQueue"
+ImageEffectPropOpenCLRenderSupported            : cstring : "OfxImageEffectPropOpenCLRenderSupported"
+ImageEffectPropOpenCLEnabled                    : cstring : "OfxImageEffectPropOpenCLEnabled"
+ImageEffectPropOpenCLCommandQueue               : cstring : "OfxImageEffectPropOpenCLCommandQueue"
 
-kOfxOpenGLPropPixelDepth                            : cstring : "OfxOpenGLPropPixelDepth"
+OpenGLPropPixelDepth                            : cstring : "OfxOpenGLPropPixelDepth"
 
-kOfxInteractActionDraw                              : cstring : "OfxInteractActionDraw"
-kOfxInteractActionPenMotion                         : cstring : "OfxInteractActionPenMotion"
-kOfxInteractActionPenDown                           : cstring : "OfxInteractActionPenDown"
-kOfxInteractActionPenUp                             : cstring : "OfxInteractActionPenUp"
-kOfxInteractActionKeyDown                           : cstring : "OfxInteractActionKeyDown"
-kOfxInteractActionKeyUp                             : cstring : "OfxInteractActionKeyUp"
-kOfxInteractActionKeyRepeat                         : cstring : "OfxInteractActionKeyRepeat"
-kOfxInteractActionGainFocus                         : cstring : "OfxInteractActionGainFocus"
-kOfxInteractActionLoseFocus                         : cstring : "OfxInteractActionLoseFocus"
+InteractActionDraw                              : cstring : "OfxInteractActionDraw"
+InteractActionPenMotion                         : cstring : "OfxInteractActionPenMotion"
+InteractActionPenDown                           : cstring : "OfxInteractActionPenDown"
+InteractActionPenUp                             : cstring : "OfxInteractActionPenUp"
+InteractActionKeyDown                           : cstring : "OfxInteractActionKeyDown"
+InteractActionKeyUp                             : cstring : "OfxInteractActionKeyUp"
+InteractActionKeyRepeat                         : cstring : "OfxInteractActionKeyRepeat"
+InteractActionGainFocus                         : cstring : "OfxInteractActionGainFocus"
+InteractActionLoseFocus                         : cstring : "OfxInteractActionLoseFocus"
 
-kOfxInteractPropSlaveToParam                        : cstring : "OfxInteractPropSlaveToParam"
-kOfxInteractPropPixelScale                          : cstring : "OfxInteractPropPixelScale"
-kOfxInteractPropBackgroundColour                    : cstring : "OfxInteractPropBackgroundColour"
-kOfxInteractPropSuggestedColour                     : cstring : "OfxInteractPropSuggestedColour"
-kOfxInteractPropPenPosition                         : cstring : "OfxInteractPropPenPosition"
-kOfxInteractPropPenViewportPosition                 : cstring : "OfxInteractPropPenViewportPosition"
-kOfxInteractPropPenPressure                         : cstring : "OfxInteractPropPenPressure"
-kOfxInteractPropBitDepth                            : cstring : "OfxInteractPropBitDepth"
-kOfxInteractPropHasAlpha                            : cstring : "OfxInteractPropHasAlpha"
-kOfxInteractPropDrawContext                         : cstring : "OfxInteractPropDrawContext"
-kOfxInteractPropViewportSize                        : cstring : "OfxInteractPropViewport"
+InteractPropSlaveToParam                        : cstring : "OfxInteractPropSlaveToParam"
+InteractPropPixelScale                          : cstring : "OfxInteractPropPixelScale"
+InteractPropBackgroundColour                    : cstring : "OfxInteractPropBackgroundColour"
+InteractPropSuggestedColour                     : cstring : "OfxInteractPropSuggestedColour"
+InteractPropPenPosition                         : cstring : "OfxInteractPropPenPosition"
+InteractPropPenViewportPosition                 : cstring : "OfxInteractPropPenViewportPosition"
+InteractPropPenPressure                         : cstring : "OfxInteractPropPenPressure"
+InteractPropBitDepth                            : cstring : "OfxInteractPropBitDepth"
+InteractPropHasAlpha                            : cstring : "OfxInteractPropHasAlpha"
+InteractPropDrawContext                         : cstring : "OfxInteractPropDrawContext"
+InteractPropViewportSize                        : cstring : "OfxInteractPropViewport"
 
-kOfxMessageFatal                                    : cstring : "OfxMessageFatal"
-kOfxMessageError                                    : cstring : "OfxMessageError"
-kOfxMessageWarning                                  : cstring : "OfxMessageWarning"
-kOfxMessageMessage                                  : cstring : "OfxMessageMessage"
-kOfxMessageLog                                      : cstring : "OfxMessageLog"
-kOfxMessageQuestion                                 : cstring : "OfxMessageQuestion"
+MessageFatal                                    : cstring : "OfxMessageFatal"
+MessageError                                    : cstring : "OfxMessageError"
+MessageWarning                                  : cstring : "OfxMessageWarning"
+MessageMessage                                  : cstring : "OfxMessageMessage"
+MessageLog                                      : cstring : "OfxMessageLog"
+MessageQuestion                                 : cstring : "OfxMessageQuestion"
 
-kOfxParamTypeInteger                                : cstring : "OfxParamTypeInteger"
-kOfxParamTypeDouble                                 : cstring : "OfxParamTypeDouble"
-kOfxParamTypeBoolean                                : cstring : "OfxParamTypeBoolean"
-kOfxParamTypeChoice                                 : cstring : "OfxParamTypeChoice"
-kOfxParamTypeRGBA                                   : cstring : "OfxParamTypeRGBA"
-kOfxParamTypeRGB                                    : cstring : "OfxParamTypeRGB"
-kOfxParamTypeDouble2D                               : cstring : "OfxParamTypeDouble2D"
-kOfxParamTypeInteger2D                              : cstring : "OfxParamTypeInteger2D"
-kOfxParamTypeDouble3D                               : cstring : "OfxParamTypeDouble3D"
-kOfxParamTypeInteger3D                              : cstring : "OfxParamTypeInteger3D"
-kOfxParamTypeString                                 : cstring : "OfxParamTypeString"
-kOfxParamTypeCustom                                 : cstring : "OfxParamTypeCustom"
-kOfxParamTypeGroup                                  : cstring : "OfxParamTypeGroup"
-kOfxParamTypePage                                   : cstring : "OfxParamTypePage"
-kOfxParamTypePushButton                             : cstring : "OfxParamTypePushButton"
-kOfxParamTypeParametric                             : cstring : "OfxParamTypeParametric"
+ParamTypeInteger                                : cstring : "OfxParamTypeInteger"
+ParamTypeDouble                                 : cstring : "OfxParamTypeDouble"
+ParamTypeBoolean                                : cstring : "OfxParamTypeBoolean"
+ParamTypeChoice                                 : cstring : "OfxParamTypeChoice"
+ParamTypeRGBA                                   : cstring : "OfxParamTypeRGBA"
+ParamTypeRGB                                    : cstring : "OfxParamTypeRGB"
+ParamTypeDouble2D                               : cstring : "OfxParamTypeDouble2D"
+ParamTypeInteger2D                              : cstring : "OfxParamTypeInteger2D"
+ParamTypeDouble3D                               : cstring : "OfxParamTypeDouble3D"
+ParamTypeInteger3D                              : cstring : "OfxParamTypeInteger3D"
+ParamTypeString                                 : cstring : "OfxParamTypeString"
+ParamTypeCustom                                 : cstring : "OfxParamTypeCustom"
+ParamTypeGroup                                  : cstring : "OfxParamTypeGroup"
+ParamTypePage                                   : cstring : "OfxParamTypePage"
+ParamTypePushButton                             : cstring : "OfxParamTypePushButton"
+ParamTypeParametric                             : cstring : "OfxParamTypeParametric"
 
-kOfxParamHostPropSupportsCustomAnimation            : cstring : "OfxParamHostPropSupportsCustomAnimation"
-kOfxParamHostPropSupportsStringAnimation            : cstring : "OfxParamHostPropSupportsStringAnimation"
-kOfxParamHostPropSupportsBooleanAnimation           : cstring : "OfxParamHostPropSupportsBooleanAnimation"
-kOfxParamHostPropSupportsChoiceAnimation            : cstring : "OfxParamHostPropSupportsChoiceAnimation"
-kOfxParamHostPropSupportsCustomInteract             : cstring : "OfxParamHostPropSupportsCustomInteract"
-kOfxParamHostPropSupportsParametricAnimation        : cstring : "OfxParamHostPropSupportsParametricAnimation"
+ParamHostPropSupportsCustomAnimation            : cstring : "OfxParamHostPropSupportsCustomAnimation"
+ParamHostPropSupportsStringAnimation            : cstring : "OfxParamHostPropSupportsStringAnimation"
+ParamHostPropSupportsBooleanAnimation           : cstring : "OfxParamHostPropSupportsBooleanAnimation"
+ParamHostPropSupportsChoiceAnimation            : cstring : "OfxParamHostPropSupportsChoiceAnimation"
+ParamHostPropSupportsCustomInteract             : cstring : "OfxParamHostPropSupportsCustomInteract"
+ParamHostPropSupportsParametricAnimation        : cstring : "OfxParamHostPropSupportsParametricAnimation"
 
-kOfxParamHostPropMaxParameters                      : cstring : "OfxParamHostPropMaxParameters"
-kOfxParamHostPropMaxPages                           : cstring : "OfxParamHostPropMaxPages"
-kOfxParamHostPropPageRowColumnCount                 : cstring : "OfxParamHostPropPageRowColumnCount"
+ParamHostPropMaxParameters                      : cstring : "OfxParamHostPropMaxParameters"
+ParamHostPropMaxPages                           : cstring : "OfxParamHostPropMaxPages"
+ParamHostPropPageRowColumnCount                 : cstring : "OfxParamHostPropPageRowColumnCount"
 
-kOfxParamPageSkipRow                                : cstring : "OfxParamPageSkipRow"
-kOfxParamPageSkipColumn                             : cstring : "OfxParamPageSkipColumn"
+ParamPageSkipRow                                : cstring : "OfxParamPageSkipRow"
+ParamPageSkipColumn                             : cstring : "OfxParamPageSkipColumn"
 
-kOfxParamInvalidateValueChange                      : cstring : "OfxParamInvalidateValueChange"
-kOfxParamInvalidateValueChangeToEnd                 : cstring : "OfxParamInvalidateValueChangeToEnd"
-kOfxParamInvalidateAll                              : cstring : "OfxParamInvalidateAll"
+ParamInvalidateValueChange                      : cstring : "OfxParamInvalidateValueChange"
+ParamInvalidateValueChangeToEnd                 : cstring : "OfxParamInvalidateValueChangeToEnd"
+ParamInvalidateAll                              : cstring : "OfxParamInvalidateAll"
 
-kOfxParamPropInteractV1                             : cstring : "OfxParamPropInteractV1"
-kOfxParamPropInteractSize                           : cstring : "OfxParamPropInteractSize"
-kOfxParamPropInteractSizeAspect                     : cstring : "OfxParamPropInteractSizeAspect"
-kOfxParamPropInteractMinimumSize                    : cstring : "OfxParamPropInteractMinimumSize"
-kOfxParamPropInteractPreferedSize                   : cstring : "OfxParamPropInteractPreferedSize"
+ParamPropInteractV1                             : cstring : "OfxParamPropInteractV1"
+ParamPropInteractSize                           : cstring : "OfxParamPropInteractSize"
+ParamPropInteractSizeAspect                     : cstring : "OfxParamPropInteractSizeAspect"
+ParamPropInteractMinimumSize                    : cstring : "OfxParamPropInteractMinimumSize"
+ParamPropInteractPreferedSize                   : cstring : "OfxParamPropInteractPreferedSize"
 
-kOfxParamPropType                                   : cstring : "OfxParamPropType"
-kOfxParamPropAnimates                               : cstring : "OfxParamPropAnimates"
-kOfxParamPropCanUndo                                : cstring : "OfxParamPropCanUndo"
-kOfxParamPropIsAnimating                            : cstring : "OfxParamPropIsAnimating"
-kOfxParamPropPluginMayWrite                         : cstring : "OfxParamPropPluginMayWrite"
-kOfxParamPropPersistant                             : cstring : "OfxParamPropPersistant"
-kOfxParamPropEvaluateOnChange                       : cstring : "OfxParamPropEvaluateOnChange"
-kOfxParamPropSecret                                 : cstring : "OfxParamPropSecret"
-kOfxParamPropScriptName                             : cstring : "OfxParamPropScriptName"
-kOfxParamPropCacheInvalidation                      : cstring : "OfxParamPropCacheInvalidation"
-kOfxParamPropHint                                   : cstring : "OfxParamPropHint"
-kOfxParamPropDefault                                : cstring : "OfxParamPropDefault"
-kOfxParamPropDoubleType                             : cstring : "OfxParamPropDoubleType"
-kOfxParamPropDefaultCoordinateSystem                : cstring : "OfxParamPropDefaultCoordinateSystem"
-kOfxParamPropHasHostOverlayHandle                   : cstring : "OfxParamPropHasHostOverlayHandle"
-kOfxParamPropUseHostOverlayHandle                   : cstring : "kOfxParamPropUseHostOverlayHandle"
-kOfxParamPropShowTimeMarker                         : cstring : "OfxParamPropShowTimeMarker"
-kOfxParamPropPageChild                              : cstring : "OfxParamPropPageChild"
-kOfxParamPropParent                                 : cstring : "OfxParamPropParent"
-kOfxParamPropGroupOpen                              : cstring : "OfxParamPropGroupOpen"
-kOfxParamPropEnabled                                : cstring : "OfxParamPropEnabled"
-kOfxParamPropDataPtr                                : cstring : "OfxParamPropDataPtr"
-kOfxParamPropChoiceOption                           : cstring : "OfxParamPropChoiceOption"
-kOfxParamPropMin                                    : cstring : "OfxParamPropMin"
-kOfxParamPropMax                                    : cstring : "OfxParamPropMax"
-kOfxParamPropDisplayMin                             : cstring : "OfxParamPropDisplayMin"
-kOfxParamPropDisplayMax                             : cstring : "OfxParamPropDisplayMax"
-kOfxParamPropIncrement                              : cstring : "OfxParamPropIncrement"
-kOfxParamPropDigits                                 : cstring : "OfxParamPropDigits"
-kOfxParamPropDimensionLabel                         : cstring : "OfxParamPropDimensionLabel"
-kOfxParamPropIsAutoKeying                           : cstring : "OfxParamPropIsAutoKeying"
-kOfxParamPropCustomInterpCallbackV1                 : cstring : "OfxParamPropCustomCallbackV1"
-kOfxParamPropStringMode                             : cstring : "OfxParamPropStringMode"
-kOfxParamPropStringFilePathExists                   : cstring : "OfxParamPropStringFilePathExists"
-kOfxParamPropCustomValue                            : cstring : "OfxParamPropCustomValue"
-kOfxParamPropInterpolationTime                      : cstring : "OfxParamPropInterpolationTime"
-kOfxParamPropInterpolationAmount                    : cstring : "OfxParamPropInterpolationAmount"
-kOfxParamPropParametricDimension                    : cstring : "OfxParamPropParametricDimension"
-kOfxParamPropParametricUIColour                     : cstring : "OfxParamPropParametricUIColour"
-kOfxParamPropParametricInteractBackground           : cstring : "OfxParamPropParametricInteractBackground"
-kOfxParamPropParametricRange                        : cstring : "OfxParamPropParametricRange"
+ParamPropType                                   : cstring : "OfxParamPropType"
+ParamPropAnimates                               : cstring : "OfxParamPropAnimates"
+ParamPropCanUndo                                : cstring : "OfxParamPropCanUndo"
+ParamPropIsAnimating                            : cstring : "OfxParamPropIsAnimating"
+ParamPropPluginMayWrite                         : cstring : "OfxParamPropPluginMayWrite"
+ParamPropPersistant                             : cstring : "OfxParamPropPersistant"
+ParamPropEvaluateOnChange                       : cstring : "OfxParamPropEvaluateOnChange"
+ParamPropSecret                                 : cstring : "OfxParamPropSecret"
+ParamPropScriptName                             : cstring : "OfxParamPropScriptName"
+ParamPropCacheInvalidation                      : cstring : "OfxParamPropCacheInvalidation"
+ParamPropHint                                   : cstring : "OfxParamPropHint"
+ParamPropDefault                                : cstring : "OfxParamPropDefault"
+ParamPropDoubleType                             : cstring : "OfxParamPropDoubleType"
+ParamPropDefaultCoordinateSystem                : cstring : "OfxParamPropDefaultCoordinateSystem"
+ParamPropHasHostOverlayHandle                   : cstring : "OfxParamPropHasHostOverlayHandle"
+ParamPropUseHostOverlayHandle                   : cstring : "kOfxParamPropUseHostOverlayHandle"
+ParamPropShowTimeMarker                         : cstring : "OfxParamPropShowTimeMarker"
+ParamPropPageChild                              : cstring : "OfxParamPropPageChild"
+ParamPropParent                                 : cstring : "OfxParamPropParent"
+ParamPropGroupOpen                              : cstring : "OfxParamPropGroupOpen"
+ParamPropEnabled                                : cstring : "OfxParamPropEnabled"
+ParamPropDataPtr                                : cstring : "OfxParamPropDataPtr"
+ParamPropChoiceOption                           : cstring : "OfxParamPropChoiceOption"
+ParamPropMin                                    : cstring : "OfxParamPropMin"
+ParamPropMax                                    : cstring : "OfxParamPropMax"
+ParamPropDisplayMin                             : cstring : "OfxParamPropDisplayMin"
+ParamPropDisplayMax                             : cstring : "OfxParamPropDisplayMax"
+ParamPropIncrement                              : cstring : "OfxParamPropIncrement"
+ParamPropDigits                                 : cstring : "OfxParamPropDigits"
+ParamPropDimensionLabel                         : cstring : "OfxParamPropDimensionLabel"
+ParamPropIsAutoKeying                           : cstring : "OfxParamPropIsAutoKeying"
+ParamPropCustomInterpCallbackV1                 : cstring : "OfxParamPropCustomCallbackV1"
+ParamPropStringMode                             : cstring : "OfxParamPropStringMode"
+ParamPropStringFilePathExists                   : cstring : "OfxParamPropStringFilePathExists"
+ParamPropCustomValue                            : cstring : "OfxParamPropCustomValue"
+ParamPropInterpolationTime                      : cstring : "OfxParamPropInterpolationTime"
+ParamPropInterpolationAmount                    : cstring : "OfxParamPropInterpolationAmount"
+ParamPropParametricDimension                    : cstring : "OfxParamPropParametricDimension"
+ParamPropParametricUIColour                     : cstring : "OfxParamPropParametricUIColour"
+ParamPropParametricInteractBackground           : cstring : "OfxParamPropParametricInteractBackground"
+ParamPropParametricRange                        : cstring : "OfxParamPropParametricRange"
 
-kOfxParamDoubleTypePlain                            : cstring : "OfxParamDoubleTypePlain"
-kOfxParamDoubleTypeScale                            : cstring : "OfxParamDoubleTypeScale"
-kOfxParamDoubleTypeAngle                            : cstring : "OfxParamDoubleTypeAngle"
-kOfxParamDoubleTypeTime                             : cstring : "OfxParamDoubleTypeTime"
-kOfxParamDoubleTypeAbsoluteTime                     : cstring : "OfxParamDoubleTypeAbsoluteTime"
-kOfxParamDoubleTypeX                                : cstring : "OfxParamDoubleTypeX"
-kOfxParamDoubleTypeY                                : cstring : "OfxParamDoubleTypeY"
-kOfxParamDoubleTypeXAbsolute                        : cstring : "OfxParamDoubleTypeXAbsolute"
-kOfxParamDoubleTypeYAbsolute                        : cstring : "OfxParamDoubleTypeYAbsolute"
-kOfxParamDoubleTypeXY                               : cstring : "OfxParamDoubleTypeXY"
-kOfxParamDoubleTypeXYAbsolute                       : cstring : "OfxParamDoubleTypeXYAbsolute"
-kOfxParamDoubleTypeNormalisedX                      : cstring : "OfxParamDoubleTypeNormalisedX"
-kOfxParamDoubleTypeNormalisedY                      : cstring : "OfxParamDoubleTypeNormalisedY"
-kOfxParamDoubleTypeNormalisedXAbsolute              : cstring : "OfxParamDoubleTypeNormalisedXAbsolute"
-kOfxParamDoubleTypeNormalisedYAbsolute              : cstring : "OfxParamDoubleTypeNormalisedYAbsolute"
-kOfxParamDoubleTypeNormalisedXY                     : cstring : "OfxParamDoubleTypeNormalisedXY"
-kOfxParamDoubleTypeNormalisedXYAbsolute             : cstring : "OfxParamDoubleTypeNormalisedXYAbsolute"
+ParamDoubleTypePlain                            : cstring : "OfxParamDoubleTypePlain"
+ParamDoubleTypeScale                            : cstring : "OfxParamDoubleTypeScale"
+ParamDoubleTypeAngle                            : cstring : "OfxParamDoubleTypeAngle"
+ParamDoubleTypeTime                             : cstring : "OfxParamDoubleTypeTime"
+ParamDoubleTypeAbsoluteTime                     : cstring : "OfxParamDoubleTypeAbsoluteTime"
+ParamDoubleTypeX                                : cstring : "OfxParamDoubleTypeX"
+ParamDoubleTypeY                                : cstring : "OfxParamDoubleTypeY"
+ParamDoubleTypeXAbsolute                        : cstring : "OfxParamDoubleTypeXAbsolute"
+ParamDoubleTypeYAbsolute                        : cstring : "OfxParamDoubleTypeYAbsolute"
+ParamDoubleTypeXY                               : cstring : "OfxParamDoubleTypeXY"
+ParamDoubleTypeXYAbsolute                       : cstring : "OfxParamDoubleTypeXYAbsolute"
+ParamDoubleTypeNormalisedX                      : cstring : "OfxParamDoubleTypeNormalisedX"
+ParamDoubleTypeNormalisedY                      : cstring : "OfxParamDoubleTypeNormalisedY"
+ParamDoubleTypeNormalisedXAbsolute              : cstring : "OfxParamDoubleTypeNormalisedXAbsolute"
+ParamDoubleTypeNormalisedYAbsolute              : cstring : "OfxParamDoubleTypeNormalisedYAbsolute"
+ParamDoubleTypeNormalisedXY                     : cstring : "OfxParamDoubleTypeNormalisedXY"
+ParamDoubleTypeNormalisedXYAbsolute             : cstring : "OfxParamDoubleTypeNormalisedXYAbsolute"
 
-kOfxParamCoordinatesCanonical                       : cstring : "OfxParamCoordinatesCanonical"
-kOfxParamCoordinatesNormalised                      : cstring : "OfxParamCoordinatesNormalised"
+ParamCoordinatesCanonical                       : cstring : "OfxParamCoordinatesCanonical"
+ParamCoordinatesNormalised                      : cstring : "OfxParamCoordinatesNormalised"
 
-kOfxParamStringIsSingleLine                         : cstring : "OfxParamStringIsSingleLine"
-kOfxParamStringIsMultiLine                          : cstring : "OfxParamStringIsMultiLine"
-kOfxParamStringIsFilePath                           : cstring : "OfxParamStringIsFilePath"
-kOfxParamStringIsDirectoryPath                      : cstring : "OfxParamStringIsDirectoryPath"
-kOfxParamStringIsLabel                              : cstring : "OfxParamStringIsLabel"
-kOfxParamStringIsRichTextFormat                     : cstring : "OfxParamStringIsRichTextFormat"
+ParamStringIsSingleLine                         : cstring : "OfxParamStringIsSingleLine"
+ParamStringIsMultiLine                          : cstring : "OfxParamStringIsMultiLine"
+ParamStringIsFilePath                           : cstring : "OfxParamStringIsFilePath"
+ParamStringIsDirectoryPath                      : cstring : "OfxParamStringIsDirectoryPath"
+ParamStringIsLabel                              : cstring : "OfxParamStringIsLabel"
+ParamStringIsRichTextFormat                     : cstring : "OfxParamStringIsRichTextFormat"
 
-kOfxKey_Unknown                                     : i32 : 0x0000
-kOfxKey_BackSpace                                   : i32 : 0xff08
-kOfxKey_Tab                                         : i32 : 0xff09
-kOfxKey_Linefeed                                    : i32 : 0xff0a
-kOfxKey_Clear                                       : i32 : 0xff0b
-kOfxKey_Return                                      : i32 : 0xff0d
-kOfxKey_Pause                                       : i32 : 0xff13
-kOfxKey_Scroll_Lock                                 : i32 : 0xff14
-kOfxKey_Sys_Req                                     : i32 : 0xff15
-kOfxKey_Escape                                      : i32 : 0xff1b
-kOfxKey_Delete                                      : i32 : 0xffff
-kOfxKey_Multi_key                                   : i32 : 0xff20
-kOfxKey_SingleCandidate                             : i32 : 0xff3c
-kOfxKey_MultipleCandidate                           : i32 : 0xff3d
-kOfxKey_PreviousCandidate                           : i32 : 0xff3e
-kOfxKey_Kanji                                       : i32 : 0xff21
-kOfxKey_Muhenkan                                    : i32 : 0xff22
-kOfxKey_Henkan_Mode                                 : i32 : 0xff23
-kOfxKey_Henkan                                      : i32 : 0xff23
-kOfxKey_Romaji                                      : i32 : 0xff24
-kOfxKey_Hiragana                                    : i32 : 0xff25
-kOfxKey_Katakana                                    : i32 : 0xff26
-kOfxKey_Hiragana_Katakana                           : i32 : 0xff27
-kOfxKey_Zenkaku                                     : i32 : 0xff28
-kOfxKey_Hankaku                                     : i32 : 0xff29
-kOfxKey_Zenkaku_Hankaku                             : i32 : 0xff2a
-kOfxKey_Touroku                                     : i32 : 0xff2b
-kOfxKey_Massyo                                      : i32 : 0xff2c
-kOfxKey_Kana_Lock                                   : i32 : 0xff2d
-kOfxKey_Kana_Shift                                  : i32 : 0xff2e
-kOfxKey_Eisu_Shift                                  : i32 : 0xff2f
-kOfxKey_Eisu_toggle                                 : i32 : 0xff30
-kOfxKey_Zen_Koho                                    : i32 : 0xff3d
-kOfxKey_Mae_Koho                                    : i32 : 0xff3e
-kOfxKey_Home                                        : i32 : 0xff50
-kOfxKey_Left                                        : i32 : 0xff51
-kOfxKey_Up                                          : i32 : 0xff52
-kOfxKey_Right                                       : i32 : 0xff53
-kOfxKey_Down                                        : i32 : 0xff54
-kOfxKey_Prior                                       : i32 : 0xff55
-kOfxKey_Page_Up                                     : i32 : 0xff55
-kOfxKey_Next                                        : i32 : 0xff56
-kOfxKey_Page_Down                                   : i32 : 0xff56
-kOfxKey_End                                         : i32 : 0xff57
-kOfxKey_Begin                                       : i32 : 0xff58
-kOfxKey_Select                                      : i32 : 0xff60
-kOfxKey_Print                                       : i32 : 0xff61
-kOfxKey_Execute                                     : i32 : 0xff62
-kOfxKey_Insert                                      : i32 : 0xff63
-kOfxKey_Undo                                        : i32 : 0xff65
-kOfxKey_Redo                                        : i32 : 0xff66
-kOfxKey_Menu                                        : i32 : 0xff67
-kOfxKey_Find                                        : i32 : 0xff68
-kOfxKey_Cancel                                      : i32 : 0xff69
-kOfxKey_Help                                        : i32 : 0xff6a
-kOfxKey_Break                                       : i32 : 0xff6b
-kOfxKey_Mode_switch                                 : i32 : 0xff7e
-kOfxKey_script_switch                               : i32 : 0xff7e
-kOfxKey_Num_Lock                                    : i32 : 0xff7f
-kOfxKey_KP_Space                                    : i32 : 0xff80
-kOfxKey_KP_Tab                                      : i32 : 0xff89
-kOfxKey_KP_Enter                                    : i32 : 0xff8d
-kOfxKey_KP_F1                                       : i32 : 0xff91
-kOfxKey_KP_F2                                       : i32 : 0xff92
-kOfxKey_KP_F3                                       : i32 : 0xff93
-kOfxKey_KP_F4                                       : i32 : 0xff94
-kOfxKey_KP_Home                                     : i32 : 0xff95
-kOfxKey_KP_Left                                     : i32 : 0xff96
-kOfxKey_KP_Up                                       : i32 : 0xff97
-kOfxKey_KP_Right                                    : i32 : 0xff98
-kOfxKey_KP_Down                                     : i32 : 0xff99
-kOfxKey_KP_Prior                                    : i32 : 0xff9a
-kOfxKey_KP_Page_Up                                  : i32 : 0xff9a
-kOfxKey_KP_Next                                     : i32 : 0xff9b
-kOfxKey_KP_Page_Down                                : i32 : 0xff9b
-kOfxKey_KP_End                                      : i32 : 0xff9c
-kOfxKey_KP_Begin                                    : i32 : 0xff9d
-kOfxKey_KP_Insert                                   : i32 : 0xff9e
-kOfxKey_KP_Delete                                   : i32 : 0xff9f
-kOfxKey_KP_Equal                                    : i32 : 0xffbd
-kOfxKey_KP_Multiply                                 : i32 : 0xffaa
-kOfxKey_KP_Add                                      : i32 : 0xffab
-kOfxKey_KP_Separator                                : i32 : 0xffac
-kOfxKey_KP_Subtract                                 : i32 : 0xffad
-kOfxKey_KP_Decimal                                  : i32 : 0xffae
-kOfxKey_KP_Divide                                   : i32 : 0xffaf
-kOfxKey_KP_0                                        : i32 : 0xffb0
-kOfxKey_KP_1                                        : i32 : 0xffb1
-kOfxKey_KP_2                                        : i32 : 0xffb2
-kOfxKey_KP_3                                        : i32 : 0xffb3
-kOfxKey_KP_4                                        : i32 : 0xffb4
-kOfxKey_KP_5                                        : i32 : 0xffb5
-kOfxKey_KP_6                                        : i32 : 0xffb6
-kOfxKey_KP_7                                        : i32 : 0xffb7
-kOfxKey_KP_8                                        : i32 : 0xffb8
-kOfxKey_KP_9                                        : i32 : 0xffb9
-kOfxKey_F1                                          : i32 : 0xffbe
-kOfxKey_F2                                          : i32 : 0xffbf
-kOfxKey_F3                                          : i32 : 0xffc0
-kOfxKey_F4                                          : i32 : 0xffc1
-kOfxKey_F5                                          : i32 : 0xffc2
-kOfxKey_F6                                          : i32 : 0xffc3
-kOfxKey_F7                                          : i32 : 0xffc4
-kOfxKey_F8                                          : i32 : 0xffc5
-kOfxKey_F9                                          : i32 : 0xffc6
-kOfxKey_F10                                         : i32 : 0xffc7
-kOfxKey_F11                                         : i32 : 0xffc8
-kOfxKey_L1                                          : i32 : 0xffc8
-kOfxKey_F12                                         : i32 : 0xffc9
-kOfxKey_L2                                          : i32 : 0xffc9
-kOfxKey_F13                                         : i32 : 0xffca
-kOfxKey_L3                                          : i32 : 0xffca
-kOfxKey_F14                                         : i32 : 0xffcb
-kOfxKey_L4                                          : i32 : 0xffcb
-kOfxKey_F15                                         : i32 : 0xffcc
-kOfxKey_L5                                          : i32 : 0xffcc
-kOfxKey_F16                                         : i32 : 0xffcd
-kOfxKey_L6                                          : i32 : 0xffcd
-kOfxKey_F17                                         : i32 : 0xffce
-kOfxKey_L7                                          : i32 : 0xffce
-kOfxKey_F18                                         : i32 : 0xffcf
-kOfxKey_L8                                          : i32 : 0xffcf
-kOfxKey_F19                                         : i32 : 0xffd0
-kOfxKey_L9                                          : i32 : 0xffd0
-kOfxKey_F20                                         : i32 : 0xffd1
-kOfxKey_L10                                         : i32 : 0xffd1
-kOfxKey_F21                                         : i32 : 0xffd2
-kOfxKey_R1                                          : i32 : 0xffd2
-kOfxKey_F22                                         : i32 : 0xffd3
-kOfxKey_R2                                          : i32 : 0xffd3
-kOfxKey_F23                                         : i32 : 0xffd4
-kOfxKey_R3                                          : i32 : 0xffd4
-kOfxKey_F24                                         : i32 : 0xffd5
-kOfxKey_R4                                          : i32 : 0xffd5
-kOfxKey_F25                                         : i32 : 0xffd6
-kOfxKey_R5                                          : i32 : 0xffd6
-kOfxKey_F26                                         : i32 : 0xffd7
-kOfxKey_R6                                          : i32 : 0xffd7
-kOfxKey_F27                                         : i32 : 0xffd8
-kOfxKey_R7                                          : i32 : 0xffd8
-kOfxKey_F28                                         : i32 : 0xffd9
-kOfxKey_R8                                          : i32 : 0xffd9
-kOfxKey_F29                                         : i32 : 0xffda
-kOfxKey_R9                                          : i32 : 0xffda
-kOfxKey_F30                                         : i32 : 0xffdb
-kOfxKey_R10                                         : i32 : 0xffdb
-kOfxKey_F31                                         : i32 : 0xffdc
-kOfxKey_R11                                         : i32 : 0xffdc
-kOfxKey_F32                                         : i32 : 0xffdd
-kOfxKey_R12                                         : i32 : 0xffdd
-kOfxKey_F33                                         : i32 : 0xffde
-kOfxKey_R13                                         : i32 : 0xffde
-kOfxKey_F34                                         : i32 : 0xffdf
-kOfxKey_R14                                         : i32 : 0xffdf
-kOfxKey_F35                                         : i32 : 0xffe0
-kOfxKey_R15                                         : i32 : 0xffe0
-kOfxKey_Shift_L                                     : i32 : 0xffe1
-kOfxKey_Shift_R                                     : i32 : 0xffe2
-kOfxKey_Control_L                                   : i32 : 0xffe3
-kOfxKey_Control_R                                   : i32 : 0xffe4
-kOfxKey_Caps_Lock                                   : i32 : 0xffe5
-kOfxKey_Shift_Lock                                  : i32 : 0xffe6
-kOfxKey_Meta_L                                      : i32 : 0xffe7
-kOfxKey_Meta_R                                      : i32 : 0xffe8
-kOfxKey_Alt_L                                       : i32 : 0xffe9
-kOfxKey_Alt_R                                       : i32 : 0xffea
-kOfxKey_Super_L                                     : i32 : 0xffeb
-kOfxKey_Super_R                                     : i32 : 0xffec
-kOfxKey_Hyper_L                                     : i32 : 0xffed
-kOfxKey_Hyper_R                                     : i32 : 0xffee
+Key_Unknown                                     : i32 : 0x0000
+Key_BackSpace                                   : i32 : 0xff08
+Key_Tab                                         : i32 : 0xff09
+Key_Linefeed                                    : i32 : 0xff0a
+Key_Clear                                       : i32 : 0xff0b
+Key_Return                                      : i32 : 0xff0d
+Key_Pause                                       : i32 : 0xff13
+Key_Scroll_Lock                                 : i32 : 0xff14
+Key_Sys_Req                                     : i32 : 0xff15
+Key_Escape                                      : i32 : 0xff1b
+Key_Delete                                      : i32 : 0xffff
+Key_Multi_key                                   : i32 : 0xff20
+Key_SingleCandidate                             : i32 : 0xff3c
+Key_MultipleCandidate                           : i32 : 0xff3d
+Key_PreviousCandidate                           : i32 : 0xff3e
+Key_Kanji                                       : i32 : 0xff21
+Key_Muhenkan                                    : i32 : 0xff22
+Key_Henkan_Mode                                 : i32 : 0xff23
+Key_Henkan                                      : i32 : 0xff23
+Key_Romaji                                      : i32 : 0xff24
+Key_Hiragana                                    : i32 : 0xff25
+Key_Katakana                                    : i32 : 0xff26
+Key_Hiragana_Katakana                           : i32 : 0xff27
+Key_Zenkaku                                     : i32 : 0xff28
+Key_Hankaku                                     : i32 : 0xff29
+Key_Zenkaku_Hankaku                             : i32 : 0xff2a
+Key_Touroku                                     : i32 : 0xff2b
+Key_Massyo                                      : i32 : 0xff2c
+Key_Kana_Lock                                   : i32 : 0xff2d
+Key_Kana_Shift                                  : i32 : 0xff2e
+Key_Eisu_Shift                                  : i32 : 0xff2f
+Key_Eisu_toggle                                 : i32 : 0xff30
+Key_Zen_Koho                                    : i32 : 0xff3d
+Key_Mae_Koho                                    : i32 : 0xff3e
+Key_Home                                        : i32 : 0xff50
+Key_Left                                        : i32 : 0xff51
+Key_Up                                          : i32 : 0xff52
+Key_Right                                       : i32 : 0xff53
+Key_Down                                        : i32 : 0xff54
+Key_Prior                                       : i32 : 0xff55
+Key_Page_Up                                     : i32 : 0xff55
+Key_Next                                        : i32 : 0xff56
+Key_Page_Down                                   : i32 : 0xff56
+Key_End                                         : i32 : 0xff57
+Key_Begin                                       : i32 : 0xff58
+Key_Select                                      : i32 : 0xff60
+Key_Print                                       : i32 : 0xff61
+Key_Execute                                     : i32 : 0xff62
+Key_Insert                                      : i32 : 0xff63
+Key_Undo                                        : i32 : 0xff65
+Key_Redo                                        : i32 : 0xff66
+Key_Menu                                        : i32 : 0xff67
+Key_Find                                        : i32 : 0xff68
+Key_Cancel                                      : i32 : 0xff69
+Key_Help                                        : i32 : 0xff6a
+Key_Break                                       : i32 : 0xff6b
+Key_Mode_switch                                 : i32 : 0xff7e
+Key_script_switch                               : i32 : 0xff7e
+Key_Num_Lock                                    : i32 : 0xff7f
+Key_KP_Space                                    : i32 : 0xff80
+Key_KP_Tab                                      : i32 : 0xff89
+Key_KP_Enter                                    : i32 : 0xff8d
+Key_KP_F1                                       : i32 : 0xff91
+Key_KP_F2                                       : i32 : 0xff92
+Key_KP_F3                                       : i32 : 0xff93
+Key_KP_F4                                       : i32 : 0xff94
+Key_KP_Home                                     : i32 : 0xff95
+Key_KP_Left                                     : i32 : 0xff96
+Key_KP_Up                                       : i32 : 0xff97
+Key_KP_Right                                    : i32 : 0xff98
+Key_KP_Down                                     : i32 : 0xff99
+Key_KP_Prior                                    : i32 : 0xff9a
+Key_KP_Page_Up                                  : i32 : 0xff9a
+Key_KP_Next                                     : i32 : 0xff9b
+Key_KP_Page_Down                                : i32 : 0xff9b
+Key_KP_End                                      : i32 : 0xff9c
+Key_KP_Begin                                    : i32 : 0xff9d
+Key_KP_Insert                                   : i32 : 0xff9e
+Key_KP_Delete                                   : i32 : 0xff9f
+Key_KP_Equal                                    : i32 : 0xffbd
+Key_KP_Multiply                                 : i32 : 0xffaa
+Key_KP_Add                                      : i32 : 0xffab
+Key_KP_Separator                                : i32 : 0xffac
+Key_KP_Subtract                                 : i32 : 0xffad
+Key_KP_Decimal                                  : i32 : 0xffae
+Key_KP_Divide                                   : i32 : 0xffaf
+Key_KP_0                                        : i32 : 0xffb0
+Key_KP_1                                        : i32 : 0xffb1
+Key_KP_2                                        : i32 : 0xffb2
+Key_KP_3                                        : i32 : 0xffb3
+Key_KP_4                                        : i32 : 0xffb4
+Key_KP_5                                        : i32 : 0xffb5
+Key_KP_6                                        : i32 : 0xffb6
+Key_KP_7                                        : i32 : 0xffb7
+Key_KP_8                                        : i32 : 0xffb8
+Key_KP_9                                        : i32 : 0xffb9
+Key_F1                                          : i32 : 0xffbe
+Key_F2                                          : i32 : 0xffbf
+Key_F3                                          : i32 : 0xffc0
+Key_F4                                          : i32 : 0xffc1
+Key_F5                                          : i32 : 0xffc2
+Key_F6                                          : i32 : 0xffc3
+Key_F7                                          : i32 : 0xffc4
+Key_F8                                          : i32 : 0xffc5
+Key_F9                                          : i32 : 0xffc6
+Key_F10                                         : i32 : 0xffc7
+Key_F11                                         : i32 : 0xffc8
+Key_L1                                          : i32 : 0xffc8
+Key_F12                                         : i32 : 0xffc9
+Key_L2                                          : i32 : 0xffc9
+Key_F13                                         : i32 : 0xffca
+Key_L3                                          : i32 : 0xffca
+Key_F14                                         : i32 : 0xffcb
+Key_L4                                          : i32 : 0xffcb
+Key_F15                                         : i32 : 0xffcc
+Key_L5                                          : i32 : 0xffcc
+Key_F16                                         : i32 : 0xffcd
+Key_L6                                          : i32 : 0xffcd
+Key_F17                                         : i32 : 0xffce
+Key_L7                                          : i32 : 0xffce
+Key_F18                                         : i32 : 0xffcf
+Key_L8                                          : i32 : 0xffcf
+Key_F19                                         : i32 : 0xffd0
+Key_L9                                          : i32 : 0xffd0
+Key_F20                                         : i32 : 0xffd1
+Key_L10                                         : i32 : 0xffd1
+Key_F21                                         : i32 : 0xffd2
+Key_R1                                          : i32 : 0xffd2
+Key_F22                                         : i32 : 0xffd3
+Key_R2                                          : i32 : 0xffd3
+Key_F23                                         : i32 : 0xffd4
+Key_R3                                          : i32 : 0xffd4
+Key_F24                                         : i32 : 0xffd5
+Key_R4                                          : i32 : 0xffd5
+Key_F25                                         : i32 : 0xffd6
+Key_R5                                          : i32 : 0xffd6
+Key_F26                                         : i32 : 0xffd7
+Key_R6                                          : i32 : 0xffd7
+Key_F27                                         : i32 : 0xffd8
+Key_R7                                          : i32 : 0xffd8
+Key_F28                                         : i32 : 0xffd9
+Key_R8                                          : i32 : 0xffd9
+Key_F29                                         : i32 : 0xffda
+Key_R9                                          : i32 : 0xffda
+Key_F30                                         : i32 : 0xffdb
+Key_R10                                         : i32 : 0xffdb
+Key_F31                                         : i32 : 0xffdc
+Key_R11                                         : i32 : 0xffdc
+Key_F32                                         : i32 : 0xffdd
+Key_R12                                         : i32 : 0xffdd
+Key_F33                                         : i32 : 0xffde
+Key_R13                                         : i32 : 0xffde
+Key_F34                                         : i32 : 0xffdf
+Key_R14                                         : i32 : 0xffdf
+Key_F35                                         : i32 : 0xffe0
+Key_R15                                         : i32 : 0xffe0
+Key_Shift_L                                     : i32 : 0xffe1
+Key_Shift_R                                     : i32 : 0xffe2
+Key_Control_L                                   : i32 : 0xffe3
+Key_Control_R                                   : i32 : 0xffe4
+Key_Caps_Lock                                   : i32 : 0xffe5
+Key_Shift_Lock                                  : i32 : 0xffe6
+Key_Meta_L                                      : i32 : 0xffe7
+Key_Meta_R                                      : i32 : 0xffe8
+Key_Alt_L                                       : i32 : 0xffe9
+Key_Alt_R                                       : i32 : 0xffea
+Key_Super_L                                     : i32 : 0xffeb
+Key_Super_R                                     : i32 : 0xffec
+Key_Hyper_L                                     : i32 : 0xffed
+Key_Hyper_R                                     : i32 : 0xffee
 
-kOfxKey_space                                       : i32 : 0x020
-kOfxKey_exclam                                      : i32 : 0x021
-kOfxKey_quotedbl                                    : i32 : 0x022
-kOfxKey_numbersign                                  : i32 : 0x023
-kOfxKey_dollar                                      : i32 : 0x024
-kOfxKey_percent                                     : i32 : 0x025
-kOfxKey_ampersand                                   : i32 : 0x026
-kOfxKey_apostrophe                                  : i32 : 0x027
-kOfxKey_quoteright                                  : i32 : 0x027
-kOfxKey_parenleft                                   : i32 : 0x028
-kOfxKey_parenright                                  : i32 : 0x029
-kOfxKey_asterisk                                    : i32 : 0x02a
-kOfxKey_plus                                        : i32 : 0x02b
-kOfxKey_comma                                       : i32 : 0x02c
-kOfxKey_minus                                       : i32 : 0x02d
-kOfxKey_period                                      : i32 : 0x02e
-kOfxKey_slash                                       : i32 : 0x02f
-kOfxKey_0                                           : i32 : 0x030
-kOfxKey_1                                           : i32 : 0x031
-kOfxKey_2                                           : i32 : 0x032
-kOfxKey_3                                           : i32 : 0x033
-kOfxKey_4                                           : i32 : 0x034
-kOfxKey_5                                           : i32 : 0x035
-kOfxKey_6                                           : i32 : 0x036
-kOfxKey_7                                           : i32 : 0x037
-kOfxKey_8                                           : i32 : 0x038
-kOfxKey_9                                           : i32 : 0x039
-kOfxKey_colon                                       : i32 : 0x03a
-kOfxKey_semicolon                                   : i32 : 0x03b
-kOfxKey_less                                        : i32 : 0x03c
-kOfxKey_equal                                       : i32 : 0x03d
-kOfxKey_greater                                     : i32 : 0x03e
-kOfxKey_question                                    : i32 : 0x03f
-kOfxKey_at                                          : i32 : 0x040
-kOfxKey_A                                           : i32 : 0x041
-kOfxKey_B                                           : i32 : 0x042
-kOfxKey_C                                           : i32 : 0x043
-kOfxKey_D                                           : i32 : 0x044
-kOfxKey_E                                           : i32 : 0x045
-kOfxKey_F                                           : i32 : 0x046
-kOfxKey_G                                           : i32 : 0x047
-kOfxKey_H                                           : i32 : 0x048
-kOfxKey_I                                           : i32 : 0x049
-kOfxKey_J                                           : i32 : 0x04a
-kOfxKey_K                                           : i32 : 0x04b
-kOfxKey_L                                           : i32 : 0x04c
-kOfxKey_M                                           : i32 : 0x04d
-kOfxKey_N                                           : i32 : 0x04e
-kOfxKey_O                                           : i32 : 0x04f
-kOfxKey_P                                           : i32 : 0x050
-kOfxKey_Q                                           : i32 : 0x051
-kOfxKey_R                                           : i32 : 0x052
-kOfxKey_S                                           : i32 : 0x053
-kOfxKey_T                                           : i32 : 0x054
-kOfxKey_U                                           : i32 : 0x055
-kOfxKey_V                                           : i32 : 0x056
-kOfxKey_W                                           : i32 : 0x057
-kOfxKey_X                                           : i32 : 0x058
-kOfxKey_Y                                           : i32 : 0x059
-kOfxKey_Z                                           : i32 : 0x05a
-kOfxKey_bracketleft                                 : i32 : 0x05b
-kOfxKey_backslash                                   : i32 : 0x05c
-kOfxKey_bracketright                                : i32 : 0x05d
-kOfxKey_asciicircum                                 : i32 : 0x05e
-kOfxKey_underscore                                  : i32 : 0x05f
-kOfxKey_grave                                       : i32 : 0x060
-kOfxKey_quoteleft                                   : i32 : 0x060
-kOfxKey_a                                           : i32 : 0x061
-kOfxKey_b                                           : i32 : 0x062
-kOfxKey_c                                           : i32 : 0x063
-kOfxKey_d                                           : i32 : 0x064
-kOfxKey_e                                           : i32 : 0x065
-kOfxKey_f                                           : i32 : 0x066
-kOfxKey_g                                           : i32 : 0x067
-kOfxKey_h                                           : i32 : 0x068
-kOfxKey_i                                           : i32 : 0x069
-kOfxKey_j                                           : i32 : 0x06a
-kOfxKey_k                                           : i32 : 0x06b
-kOfxKey_l                                           : i32 : 0x06c
-kOfxKey_m                                           : i32 : 0x06d
-kOfxKey_n                                           : i32 : 0x06e
-kOfxKey_o                                           : i32 : 0x06f
-kOfxKey_p                                           : i32 : 0x070
-kOfxKey_q                                           : i32 : 0x071
-kOfxKey_r                                           : i32 : 0x072
-kOfxKey_s                                           : i32 : 0x073
-kOfxKey_t                                           : i32 : 0x074
-kOfxKey_u                                           : i32 : 0x075
-kOfxKey_v                                           : i32 : 0x076
-kOfxKey_w                                           : i32 : 0x077
-kOfxKey_x                                           : i32 : 0x078
-kOfxKey_y                                           : i32 : 0x079
-kOfxKey_z                                           : i32 : 0x07a
-kOfxKey_braceleft                                   : i32 : 0x07b
-kOfxKey_bar                                         : i32 : 0x07c
-kOfxKey_braceright                                  : i32 : 0x07d
-kOfxKey_asciitilde                                  : i32 : 0x07e
-kOfxKey_nobreakspace                                : i32 : 0x0a0
-kOfxKey_exclamdown                                  : i32 : 0x0a1
-kOfxKey_cent                                        : i32 : 0x0a2
-kOfxKey_sterling                                    : i32 : 0x0a3
-kOfxKey_currency                                    : i32 : 0x0a4
-kOfxKey_yen                                         : i32 : 0x0a5
-kOfxKey_brokenbar                                   : i32 : 0x0a6
-kOfxKey_section                                     : i32 : 0x0a7
-kOfxKey_diaeresis                                   : i32 : 0x0a8
-kOfxKey_copyright                                   : i32 : 0x0a9
-kOfxKey_ordfeminine                                 : i32 : 0x0aa
-kOfxKey_guillemotleft                               : i32 : 0x0ab
-kOfxKey_notsign                                     : i32 : 0x0ac
-kOfxKey_hyphen                                      : i32 : 0x0ad
-kOfxKey_registered                                  : i32 : 0x0ae
-kOfxKey_macron                                      : i32 : 0x0af
-kOfxKey_degree                                      : i32 : 0x0b0
-kOfxKey_plusminus                                   : i32 : 0x0b1
-kOfxKey_twosuperior                                 : i32 : 0x0b2
-kOfxKey_threesuperior                               : i32 : 0x0b3
-kOfxKey_acute                                       : i32 : 0x0b4
-kOfxKey_mu                                          : i32 : 0x0b5
-kOfxKey_paragraph                                   : i32 : 0x0b6
-kOfxKey_periodcentered                              : i32 : 0x0b7
-kOfxKey_cedilla                                     : i32 : 0x0b8
-kOfxKey_onesuperior                                 : i32 : 0x0b9
-kOfxKey_masculine                                   : i32 : 0x0ba
-kOfxKey_guillemotright                              : i32 : 0x0bb
-kOfxKey_onequarter                                  : i32 : 0x0bc
-kOfxKey_onehalf                                     : i32 : 0x0bd
-kOfxKey_threequarters                               : i32 : 0x0be
-kOfxKey_questiondown                                : i32 : 0x0bf
-kOfxKey_Agrave                                      : i32 : 0x0c0
-kOfxKey_Aacute                                      : i32 : 0x0c1
-kOfxKey_Acircumflex                                 : i32 : 0x0c2
-kOfxKey_Atilde                                      : i32 : 0x0c3
-kOfxKey_Adiaeresis                                  : i32 : 0x0c4
-kOfxKey_Aring                                       : i32 : 0x0c5
-kOfxKey_AE                                          : i32 : 0x0c6
-kOfxKey_Ccedilla                                    : i32 : 0x0c7
-kOfxKey_Egrave                                      : i32 : 0x0c8
-kOfxKey_Eacute                                      : i32 : 0x0c9
-kOfxKey_Ecircumflex                                 : i32 : 0x0ca
-kOfxKey_Ediaeresis                                  : i32 : 0x0cb
-kOfxKey_Igrave                                      : i32 : 0x0cc
-kOfxKey_Iacute                                      : i32 : 0x0cd
-kOfxKey_Icircumflex                                 : i32 : 0x0ce
-kOfxKey_Idiaeresis                                  : i32 : 0x0cf
-kOfxKey_ETH                                         : i32 : 0x0d0
-kOfxKey_Eth                                         : i32 : 0x0d0
-kOfxKey_Ntilde                                      : i32 : 0x0d1
-kOfxKey_Ograve                                      : i32 : 0x0d2
-kOfxKey_Oacute                                      : i32 : 0x0d3
-kOfxKey_Ocircumflex                                 : i32 : 0x0d4
-kOfxKey_Otilde                                      : i32 : 0x0d5
-kOfxKey_Odiaeresis                                  : i32 : 0x0d6
-kOfxKey_multiply                                    : i32 : 0x0d7
-kOfxKey_Ooblique                                    : i32 : 0x0d8
-kOfxKey_Ugrave                                      : i32 : 0x0d9
-kOfxKey_Uacute                                      : i32 : 0x0da
-kOfxKey_Ucircumflex                                 : i32 : 0x0db
-kOfxKey_Udiaeresis                                  : i32 : 0x0dc
-kOfxKey_Yacute                                      : i32 : 0x0dd
-kOfxKey_THORN                                       : i32 : 0x0de
-kOfxKey_ssharp                                      : i32 : 0x0df
-kOfxKey_agrave                                      : i32 : 0x0e0
-kOfxKey_aacute                                      : i32 : 0x0e1
-kOfxKey_acircumflex                                 : i32 : 0x0e2
-kOfxKey_atilde                                      : i32 : 0x0e3
-kOfxKey_adiaeresis                                  : i32 : 0x0e4
-kOfxKey_aring                                       : i32 : 0x0e5
-kOfxKey_ae                                          : i32 : 0x0e6
-kOfxKey_ccedilla                                    : i32 : 0x0e7
-kOfxKey_egrave                                      : i32 : 0x0e8
-kOfxKey_eacute                                      : i32 : 0x0e9
-kOfxKey_ecircumflex                                 : i32 : 0x0ea
-kOfxKey_ediaeresis                                  : i32 : 0x0eb
-kOfxKey_igrave                                      : i32 : 0x0ec
-kOfxKey_iacute                                      : i32 : 0x0ed
-kOfxKey_icircumflex                                 : i32 : 0x0ee
-kOfxKey_idiaeresis                                  : i32 : 0x0ef
-kOfxKey_eth                                         : i32 : 0x0f0
-kOfxKey_ntilde                                      : i32 : 0x0f1
-kOfxKey_ograve                                      : i32 : 0x0f2
-kOfxKey_oacute                                      : i32 : 0x0f3
-kOfxKey_ocircumflex                                 : i32 : 0x0f4
-kOfxKey_otilde                                      : i32 : 0x0f5
-kOfxKey_odiaeresis                                  : i32 : 0x0f6
-kOfxKey_division                                    : i32 : 0x0f7
-kOfxKey_oslash                                      : i32 : 0x0f8
-kOfxKey_ugrave                                      : i32 : 0x0f9
-kOfxKey_uacute                                      : i32 : 0x0fa
-kOfxKey_ucircumflex                                 : i32 : 0x0fb
-kOfxKey_udiaeresis                                  : i32 : 0x0fc
-kOfxKey_yacute                                      : i32 : 0x0fd
-kOfxKey_thorn                                       : i32 : 0x0fe
-kOfxKey_ydiaeresis                                  : i32 : 0x0ff
+Key_space                                       : i32 : 0x020
+Key_exclam                                      : i32 : 0x021
+Key_quotedbl                                    : i32 : 0x022
+Key_numbersign                                  : i32 : 0x023
+Key_dollar                                      : i32 : 0x024
+Key_percent                                     : i32 : 0x025
+Key_ampersand                                   : i32 : 0x026
+Key_apostrophe                                  : i32 : 0x027
+Key_quoteright                                  : i32 : 0x027
+Key_parenleft                                   : i32 : 0x028
+Key_parenright                                  : i32 : 0x029
+Key_asterisk                                    : i32 : 0x02a
+Key_plus                                        : i32 : 0x02b
+Key_comma                                       : i32 : 0x02c
+Key_minus                                       : i32 : 0x02d
+Key_period                                      : i32 : 0x02e
+Key_slash                                       : i32 : 0x02f
+Key_0                                           : i32 : 0x030
+Key_1                                           : i32 : 0x031
+Key_2                                           : i32 : 0x032
+Key_3                                           : i32 : 0x033
+Key_4                                           : i32 : 0x034
+Key_5                                           : i32 : 0x035
+Key_6                                           : i32 : 0x036
+Key_7                                           : i32 : 0x037
+Key_8                                           : i32 : 0x038
+Key_9                                           : i32 : 0x039
+Key_colon                                       : i32 : 0x03a
+Key_semicolon                                   : i32 : 0x03b
+Key_less                                        : i32 : 0x03c
+Key_equal                                       : i32 : 0x03d
+Key_greater                                     : i32 : 0x03e
+Key_question                                    : i32 : 0x03f
+Key_at                                          : i32 : 0x040
+Key_A                                           : i32 : 0x041
+Key_B                                           : i32 : 0x042
+Key_C                                           : i32 : 0x043
+Key_D                                           : i32 : 0x044
+Key_E                                           : i32 : 0x045
+Key_F                                           : i32 : 0x046
+Key_G                                           : i32 : 0x047
+Key_H                                           : i32 : 0x048
+Key_I                                           : i32 : 0x049
+Key_J                                           : i32 : 0x04a
+Key_K                                           : i32 : 0x04b
+Key_L                                           : i32 : 0x04c
+Key_M                                           : i32 : 0x04d
+Key_N                                           : i32 : 0x04e
+Key_O                                           : i32 : 0x04f
+Key_P                                           : i32 : 0x050
+Key_Q                                           : i32 : 0x051
+Key_R                                           : i32 : 0x052
+Key_S                                           : i32 : 0x053
+Key_T                                           : i32 : 0x054
+Key_U                                           : i32 : 0x055
+Key_V                                           : i32 : 0x056
+Key_W                                           : i32 : 0x057
+Key_X                                           : i32 : 0x058
+Key_Y                                           : i32 : 0x059
+Key_Z                                           : i32 : 0x05a
+Key_bracketleft                                 : i32 : 0x05b
+Key_backslash                                   : i32 : 0x05c
+Key_bracketright                                : i32 : 0x05d
+Key_asciicircum                                 : i32 : 0x05e
+Key_underscore                                  : i32 : 0x05f
+Key_grave                                       : i32 : 0x060
+Key_quoteleft                                   : i32 : 0x060
+Key_a                                           : i32 : 0x061
+Key_b                                           : i32 : 0x062
+Key_c                                           : i32 : 0x063
+Key_d                                           : i32 : 0x064
+Key_e                                           : i32 : 0x065
+Key_f                                           : i32 : 0x066
+Key_g                                           : i32 : 0x067
+Key_h                                           : i32 : 0x068
+Key_i                                           : i32 : 0x069
+Key_j                                           : i32 : 0x06a
+Key_k                                           : i32 : 0x06b
+Key_l                                           : i32 : 0x06c
+Key_m                                           : i32 : 0x06d
+Key_n                                           : i32 : 0x06e
+Key_o                                           : i32 : 0x06f
+Key_p                                           : i32 : 0x070
+Key_q                                           : i32 : 0x071
+Key_r                                           : i32 : 0x072
+Key_s                                           : i32 : 0x073
+Key_t                                           : i32 : 0x074
+Key_u                                           : i32 : 0x075
+Key_v                                           : i32 : 0x076
+Key_w                                           : i32 : 0x077
+Key_x                                           : i32 : 0x078
+Key_y                                           : i32 : 0x079
+Key_z                                           : i32 : 0x07a
+Key_braceleft                                   : i32 : 0x07b
+Key_bar                                         : i32 : 0x07c
+Key_braceright                                  : i32 : 0x07d
+Key_asciitilde                                  : i32 : 0x07e
+Key_nobreakspace                                : i32 : 0x0a0
+Key_exclamdown                                  : i32 : 0x0a1
+Key_cent                                        : i32 : 0x0a2
+Key_sterling                                    : i32 : 0x0a3
+Key_currency                                    : i32 : 0x0a4
+Key_yen                                         : i32 : 0x0a5
+Key_brokenbar                                   : i32 : 0x0a6
+Key_section                                     : i32 : 0x0a7
+Key_diaeresis                                   : i32 : 0x0a8
+Key_copyright                                   : i32 : 0x0a9
+Key_ordfeminine                                 : i32 : 0x0aa
+Key_guillemotleft                               : i32 : 0x0ab
+Key_notsign                                     : i32 : 0x0ac
+Key_hyphen                                      : i32 : 0x0ad
+Key_registered                                  : i32 : 0x0ae
+Key_macron                                      : i32 : 0x0af
+Key_degree                                      : i32 : 0x0b0
+Key_plusminus                                   : i32 : 0x0b1
+Key_twosuperior                                 : i32 : 0x0b2
+Key_threesuperior                               : i32 : 0x0b3
+Key_acute                                       : i32 : 0x0b4
+Key_mu                                          : i32 : 0x0b5
+Key_paragraph                                   : i32 : 0x0b6
+Key_periodcentered                              : i32 : 0x0b7
+Key_cedilla                                     : i32 : 0x0b8
+Key_onesuperior                                 : i32 : 0x0b9
+Key_masculine                                   : i32 : 0x0ba
+Key_guillemotright                              : i32 : 0x0bb
+Key_onequarter                                  : i32 : 0x0bc
+Key_onehalf                                     : i32 : 0x0bd
+Key_threequarters                               : i32 : 0x0be
+Key_questiondown                                : i32 : 0x0bf
+Key_Agrave                                      : i32 : 0x0c0
+Key_Aacute                                      : i32 : 0x0c1
+Key_Acircumflex                                 : i32 : 0x0c2
+Key_Atilde                                      : i32 : 0x0c3
+Key_Adiaeresis                                  : i32 : 0x0c4
+Key_Aring                                       : i32 : 0x0c5
+Key_AE                                          : i32 : 0x0c6
+Key_Ccedilla                                    : i32 : 0x0c7
+Key_Egrave                                      : i32 : 0x0c8
+Key_Eacute                                      : i32 : 0x0c9
+Key_Ecircumflex                                 : i32 : 0x0ca
+Key_Ediaeresis                                  : i32 : 0x0cb
+Key_Igrave                                      : i32 : 0x0cc
+Key_Iacute                                      : i32 : 0x0cd
+Key_Icircumflex                                 : i32 : 0x0ce
+Key_Idiaeresis                                  : i32 : 0x0cf
+Key_ETH                                         : i32 : 0x0d0
+Key_Eth                                         : i32 : 0x0d0
+Key_Ntilde                                      : i32 : 0x0d1
+Key_Ograve                                      : i32 : 0x0d2
+Key_Oacute                                      : i32 : 0x0d3
+Key_Ocircumflex                                 : i32 : 0x0d4
+Key_Otilde                                      : i32 : 0x0d5
+Key_Odiaeresis                                  : i32 : 0x0d6
+Key_multiply                                    : i32 : 0x0d7
+Key_Ooblique                                    : i32 : 0x0d8
+Key_Ugrave                                      : i32 : 0x0d9
+Key_Uacute                                      : i32 : 0x0da
+Key_Ucircumflex                                 : i32 : 0x0db
+Key_Udiaeresis                                  : i32 : 0x0dc
+Key_Yacute                                      : i32 : 0x0dd
+Key_THORN                                       : i32 : 0x0de
+Key_ssharp                                      : i32 : 0x0df
+Key_agrave                                      : i32 : 0x0e0
+Key_aacute                                      : i32 : 0x0e1
+Key_acircumflex                                 : i32 : 0x0e2
+Key_atilde                                      : i32 : 0x0e3
+Key_adiaeresis                                  : i32 : 0x0e4
+Key_aring                                       : i32 : 0x0e5
+Key_ae                                          : i32 : 0x0e6
+Key_ccedilla                                    : i32 : 0x0e7
+Key_egrave                                      : i32 : 0x0e8
+Key_eacute                                      : i32 : 0x0e9
+Key_ecircumflex                                 : i32 : 0x0ea
+Key_ediaeresis                                  : i32 : 0x0eb
+Key_igrave                                      : i32 : 0x0ec
+Key_iacute                                      : i32 : 0x0ed
+Key_icircumflex                                 : i32 : 0x0ee
+Key_idiaeresis                                  : i32 : 0x0ef
+Key_eth                                         : i32 : 0x0f0
+Key_ntilde                                      : i32 : 0x0f1
+Key_ograve                                      : i32 : 0x0f2
+Key_oacute                                      : i32 : 0x0f3
+Key_ocircumflex                                 : i32 : 0x0f4
+Key_otilde                                      : i32 : 0x0f5
+Key_odiaeresis                                  : i32 : 0x0f6
+Key_division                                    : i32 : 0x0f7
+Key_oslash                                      : i32 : 0x0f8
+Key_ugrave                                      : i32 : 0x0f9
+Key_uacute                                      : i32 : 0x0fa
+Key_ucircumflex                                 : i32 : 0x0fb
+Key_udiaeresis                                  : i32 : 0x0fc
+Key_yacute                                      : i32 : 0x0fd
+Key_thorn                                       : i32 : 0x0fe
+Key_ydiaeresis                                  : i32 : 0x0ff
