@@ -14,9 +14,9 @@ effect: ^ofx.ImageEffectSuiteV1
 prop:   ^ofx.PropertySuiteV1
 
 Image :: struct {
+    bounds: ofx.RectI,
     properties: ofx.PropertySetHandle,
     ptr: rawptr,
-    bounds: ofx.RectI,
     row_bytes: i32,
 }
 
@@ -30,8 +30,8 @@ get_image :: proc(
         return img, stat
     }
 
-    prop.propGetPointer(img.properties, ofx.ImagePropData, 0, &img.ptr)
     prop.propGetIntN(img.properties, ofx.ImagePropBounds, 4, &img.bounds.x1)
+    prop.propGetPointer(img.properties, ofx.ImagePropData, 0, &img.ptr)
     prop.propGetInt(img.properties, ofx.ImagePropRowBytes, 0, &img.row_bytes)
 
     return img, ofx.StatOK
