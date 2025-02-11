@@ -9,6 +9,19 @@ Status :: i32
 
 Time :: f64
 
+RGBAColourB :: [4]byte
+RGBAColourS :: [4]u16
+RGBAColourF :: [4]f32
+RGBAColourD :: [4]f64
+
+RGBColourB :: [3]byte
+RGBColourS :: [3]u16
+RGBColourF :: [3]f32
+RGBColourD :: [3]f64
+
+PointI :: [2]i32
+PointD :: [2]f64
+
 RangeI :: struct {
     min, max: i32,
 }
@@ -17,52 +30,12 @@ RangeD :: struct {
     min, max: f64,
 }
 
-PointI :: struct {
-    x, y: i32,
-}
-
-PointD :: struct {
-    x, y: f64,
-}
-
 RectI :: struct {
     x1, y1, x2, y2: i32,
 }
 
 RectD :: struct {
     x1, y1, x2, y2: f64,
-}
-
-RGBAColourB :: struct {
-    r, g, b, a: byte,
-}
-
-RGBAColourS :: struct {
-    r, g, b, a: u16,
-}
-
-RGBAColourF :: struct {
-    r, g, b, a: f32,
-}
-
-RGBAColourD :: struct {
-    r, g, b, a: f64,
-}
-
-RGBColourB :: struct {
-    r, g, b: byte,
-}
-
-RGBColourS :: struct {
-    r, g, b: u16,
-}
-
-RGBColourF :: struct {
-    r, g, b: f32,
-}
-
-RGBColourD :: struct {
-    r, g, b: f64,
 }
 
 YUVAColourB :: struct {
