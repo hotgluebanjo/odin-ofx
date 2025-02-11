@@ -263,7 +263,7 @@ DrawPrimitive :: enum i32 {
     DrawPrimitiveLineLoop,
     DrawPrimitiveRectangle,
     DrawPrimitivePolygon,
-    DrawPrimitiveEllipse
+    DrawPrimitiveEllipse,
 }
 
 DrawTextAlignment :: enum i32 {

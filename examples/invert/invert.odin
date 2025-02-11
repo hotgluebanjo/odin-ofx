@@ -1,5 +1,6 @@
 package invert
 
+import "base:intrinsics"
 import "base:runtime"
 
 import "../../ofx"
@@ -43,7 +44,10 @@ release_image :: proc(img: Image) {
     }
 }
 
-get_pixel_ptr :: proc(img: Image, x, y: i32) -> ^ofx.RGBAColourF {
+get_pixel_ptr :: proc($T: typeid/[$N]$S, img: Image, x, y: i32) -> ^T
+    where
+        intrinsics.type_is_numeric(S),
+        N > 0 {
     if x < img.bounds.x1 || x >= img.bounds.x2 || y < img.bounds.y1 || y >= img.bounds.y2 {
         return nil
     }
@@ -52,9 +56,9 @@ get_pixel_ptr :: proc(img: Image, x, y: i32) -> ^ofx.RGBAColourF {
     x_offset := x - img.bounds.x1
 
     bytes := cast([^]byte)img.ptr
-    row_start := cast([^]ofx.RGBAColourF)&bytes[y_offset * img.row_bytes]
+    start := y_offset * img.row_bytes + x_offset * size_of(T)
 
-    return &row_start[x_offset]
+    return cast(^T)&bytes[start]
 }
 
 load :: proc() -> ofx.Status {
@@ -132,8 +136,8 @@ render :: proc(instance: ofx.ImageEffectHandle, in_args: ofx.PropertySetHandle) 
             break
         }
         for x in render_bounds.x1..<render_bounds.x2 {
-            input := get_pixel_ptr(src, x, y)
-            output := get_pixel_ptr(dst, x, y)
+            input := get_pixel_ptr(ofx.RGBAColourF, src, x, y)
+            output := get_pixel_ptr(ofx.RGBAColourF, dst, x, y)
 
             if input != nil {
                 output.rgb = 1.0 - input.rgb
@@ -151,7 +155,7 @@ plugin_main :: proc "c" (
     action: cstring,
     handle: rawptr,
     in_args: ofx.PropertySetHandle,
-    out_args: ofx.PropertySetHandle
+    out_args: ofx.PropertySetHandle,
 ) -> ofx.Status {
     context = runtime.default_context()
 
@@ -184,7 +188,7 @@ PLUGIN := ofx.Plugin{
     pluginVersionMajor      = 0,
     pluginVersionMinor      = 1,
     setHost                 = set_host,
-    mainEntry               = plugin_main
+    mainEntry               = plugin_main,
 }
 
 @export
