@@ -38,14 +38,17 @@ RectD :: struct {
     x1, y1, x2, y2: f64,
 }
 
+// DEPRECATED
 YUVAColourB :: struct {
     y, u, v, a: byte,
 }
 
+// DEPRECATED
 YUVAColourS :: struct {
     y, u, v, a: u16,
 }
 
+// DEPRECATED
 YUVAColourF :: struct {
     y, u, v, a: f32,
 }
@@ -155,6 +158,10 @@ MultiThreadSuiteV1 :: struct {
     mutexTryLock: proc "c" (mutex: MutexHandle) -> Status,
 }
 
+OpenCLProgramSuiteV1 :: struct {
+    compileProgram: proc "c" (pszProgramSource: cstring, fOptional: i32, pResult: rawptr) -> Status,
+}
+
 ParameterSuiteV1 :: struct {
     paramDefine:            proc "c" (paramSet: ParamSetHandle, paramType: cstring, name: cstring, propertySet: ^PropertySetHandle) -> Status,
     paramGetHandle:         proc "c" (paramSet: ParamSetHandle, name: cstring, param: ^ParamHandle, propertySet: ^PropertySetHandle) -> Status,
@@ -239,6 +246,11 @@ TimeLineSuiteV1 :: struct {
     getTimeBounds: proc "c" (instance: rawptr, firstTime: ^f64, lastTime: ^f64) -> Status,
 }
 
+Bytes :: struct {
+    data: [^]u8,
+    length: uint,
+}
+
 StandardColour :: enum i32 {
     StandardColourOverlayBackground,
     StandardColourOverlayActive,
@@ -312,6 +324,7 @@ TimeLineSuite                                   : cstring : "OfxTimeLineSuite"
 ParameterSuite                                  : cstring : "OfxParameterSuite"
 ParametricParameterSuite                        : cstring : "OfxParametricParameterSuite"
 OpenGLRenderSuite                               : cstring : "OfxImageEffectOpenGLRenderSuite"
+OpenCLProgramSuite                              : cstring : "OfxOpenCLProgramSuite"
 ImageEffectSuite                                : cstring : "OfxImageEffectSuite"
 
 PropAPIVersion                                  : cstring : "OfxPropAPIVersion"
@@ -363,7 +376,7 @@ ImageComponentNone                              : cstring : "OfxImageComponentNo
 ImageComponentRGBA                              : cstring : "OfxImageComponentRGBA"
 ImageComponentRGB                               : cstring : "OfxImageComponentRGB"
 ImageComponentAlpha                             : cstring : "OfxImageComponentAlpha"
-ImageComponentYUVA                              : cstring : "OfxImageComponentYUVA"
+ImageComponentYUVA                              : cstring : "OfxImageComponentYUVA" // DEPRECATED
 
 ImageOpaque                                     : cstring : "OfxImageOpaque"
 ImagePreMultiplied                              : cstring : "OfxImageAlphaPremultiplied"
@@ -392,6 +405,8 @@ ImageClipPropOptional                           : cstring : "OfxImageClipPropOpt
 ImageClipPropIsMask                             : cstring : "OfxImageClipPropIsMask"
 ImageClipPropConnected                          : cstring : "OfxImageClipPropConnected"
 ImageClipPropFieldOrder                         : cstring : "OfxImageClipPropFieldOrder"
+ImageClipPropColourspace                        : cstring : "OfxImageClipPropColourspace"
+ImageClipPropPreferredColourspaces              : cstring : "OfxImageClipPropPreferredColourspaces"
 
 ActionLoad                                      : cstring : "OfxActionLoad"
 ActionDescribe                                  : cstring : "OfxActionDescribe"
@@ -422,6 +437,7 @@ ImageEffectActionRender                         : cstring : "OfxImageEffectActio
 ImageEffectActionBeginSequenceRender            : cstring : "OfxImageEffectActionBeginSequenceRender"
 ImageEffectActionEndSequenceRender              : cstring : "OfxImageEffectActionEndSequenceRender"
 ImageEffectActionDescribeInContext              : cstring : "OfxImageEffectActionDescribeInContext"
+ImageEffectActionGetOutputColourspace           : cstring : "OfxImageEffectActionGetOutputColourspace"
 
 ImageEffectContextGenerator                     : cstring : "OfxImageEffectContextGenerator"
 ImageEffectContextFilter                        : cstring : "OfxImageEffectContextFilter"
@@ -459,6 +475,12 @@ ImageEffectTransitionSourceFromClipName         : cstring : "SourceFrom"
 ImageEffectTransitionSourceToClipName           : cstring : "SourceTo"
 ImageEffectTransitionParamName                  : cstring : "Transition"
 ImageEffectRetimerParamName                     : cstring : "SourceTime"
+
+ImageEffectColourManagementNone                 : cstring : "OfxImageEffectColourManagementNone"
+ImageEffectColourManagementBasic                : cstring : "OfxImageEffectColourManagementBasic"
+ImageEffectColourManagementCore                 : cstring : "OfxImageEffectColourManagementCore"
+ImageEffectColourManagementFull                 : cstring : "OfxImageEffectColourManagementFull"
+ImageEffectColourManagementOCIO                 : cstring : "OfxImageEffectColourManagementOCIO"
 
 ImageEffectPropSupportedContexts                : cstring : "OfxImageEffectPropSupportedContexts"
 ImageEffectPropPluginHandle                     : cstring : "OfxImageEffectPropPluginHandle"
@@ -498,7 +520,7 @@ ImageEffectPropOpenGLRenderSupported            : cstring : "OfxImageEffectPropO
 ImageEffectPropOpenGLEnabled                    : cstring : "OfxImageEffectPropOpenGLEnabled"
 ImageEffectPropOpenGLTextureIndex               : cstring : "OfxImageEffectPropOpenGLTextureIndex"
 ImageEffectPropOpenGLTextureTarget              : cstring : "OfxImageEffectPropOpenGLTextureTarget"
-ImageEffectPropInAnalysis                       : cstring : "OfxImageEffectPropInAnalysis"
+ImageEffectPropInAnalysis                       : cstring : "OfxImageEffectPropInAnalysis" // DEPRECATED
 ImageEffectPropCudaRenderSupported              : cstring : "OfxImageEffectPropCudaRenderSupported"
 ImageEffectPropCudaEnabled                      : cstring : "OfxImageEffectPropCudaEnabled"
 ImageEffectPropCudaStreamSupported              : cstring : "OfxImageEffectPropCudaStreamSupported"
@@ -507,8 +529,17 @@ ImageEffectPropMetalRenderSupported             : cstring : "OfxImageEffectPropM
 ImageEffectPropMetalEnabled                     : cstring : "OfxImageEffectPropMetalEnabled"
 ImageEffectPropMetalCommandQueue                : cstring : "OfxImageEffectPropMetalCommandQueue"
 ImageEffectPropOpenCLRenderSupported            : cstring : "OfxImageEffectPropOpenCLRenderSupported"
+ImageEffectPropOpenCLSupported                  : cstring : "OfxImageEffectPropOpenCLSupported"
 ImageEffectPropOpenCLEnabled                    : cstring : "OfxImageEffectPropOpenCLEnabled"
 ImageEffectPropOpenCLCommandQueue               : cstring : "OfxImageEffectPropOpenCLCommandQueue"
+ImageEffectPropOpenCLImage                      : cstring : "OfxImageEffectPropOpenCLImage"
+ImageEffectPropColourManagementStyle            : cstring : "OfxImageEffectPropColourManagementStyle"
+ImageEffectPropColourManagementAvailableConfigs : cstring : "OfxImageEffectPropColourManagementAvailableConfigs"
+ImageEffectPropColourManagementConfig           : cstring : "OfxImageEffectPropColourManagementConfig"
+ImageEffectPropOCIOConfig                       : cstring : "OfxImageEffectPropOCIOConfig"
+ImageEffectPropDisplayColourspace               : cstring : "OfxImageEffectPropDisplayColourspace"
+ImageEffectPropOCIODisplay                      : cstring : "OfxImageEffectPropOCIODisplay"
+ImageEffectPropOCIOView                         : cstring : "OfxImageEffectPropOCIOView"
 
 OpenGLPropPixelDepth                            : cstring : "OfxOpenGLPropPixelDepth"
 
@@ -532,7 +563,7 @@ InteractPropPenPressure                         : cstring : "OfxInteractPropPenP
 InteractPropBitDepth                            : cstring : "OfxInteractPropBitDepth"
 InteractPropHasAlpha                            : cstring : "OfxInteractPropHasAlpha"
 InteractPropDrawContext                         : cstring : "OfxInteractPropDrawContext"
-InteractPropViewportSize                        : cstring : "OfxInteractPropViewport"
+InteractPropViewportSize                        : cstring : "OfxInteractPropViewport" // DEPRECATED
 
 MessageFatal                                    : cstring : "OfxMessageFatal"
 MessageError                                    : cstring : "OfxMessageError"
@@ -545,6 +576,7 @@ ParamTypeInteger                                : cstring : "OfxParamTypeInteger
 ParamTypeDouble                                 : cstring : "OfxParamTypeDouble"
 ParamTypeBoolean                                : cstring : "OfxParamTypeBoolean"
 ParamTypeChoice                                 : cstring : "OfxParamTypeChoice"
+ParamTypeStrChoice                              : cstring : "OfxParamTypeStrChoice"
 ParamTypeRGBA                                   : cstring : "OfxParamTypeRGBA"
 ParamTypeRGB                                    : cstring : "OfxParamTypeRGB"
 ParamTypeDouble2D                               : cstring : "OfxParamTypeDouble2D"
@@ -553,6 +585,7 @@ ParamTypeDouble3D                               : cstring : "OfxParamTypeDouble3
 ParamTypeInteger3D                              : cstring : "OfxParamTypeInteger3D"
 ParamTypeString                                 : cstring : "OfxParamTypeString"
 ParamTypeCustom                                 : cstring : "OfxParamTypeCustom"
+ParamTypeBytes                                  : cstring : "OfxParamTypeBytes"
 ParamTypeGroup                                  : cstring : "OfxParamTypeGroup"
 ParamTypePage                                   : cstring : "OfxParamTypePage"
 ParamTypePushButton                             : cstring : "OfxParamTypePushButton"
@@ -562,6 +595,8 @@ ParamHostPropSupportsCustomAnimation            : cstring : "OfxParamHostPropSup
 ParamHostPropSupportsStringAnimation            : cstring : "OfxParamHostPropSupportsStringAnimation"
 ParamHostPropSupportsBooleanAnimation           : cstring : "OfxParamHostPropSupportsBooleanAnimation"
 ParamHostPropSupportsChoiceAnimation            : cstring : "OfxParamHostPropSupportsChoiceAnimation"
+ParamHostPropSupportsStrChoiceAnimation         : cstring : "OfxParamHostPropSupportsStrChoiceAnimation"
+ParamHostPropSupportsStrChoice                  : cstring : "OfxParamHostPropSupportsStrChoice"
 ParamHostPropSupportsCustomInteract             : cstring : "OfxParamHostPropSupportsCustomInteract"
 ParamHostPropSupportsParametricAnimation        : cstring : "OfxParamHostPropSupportsParametricAnimation"
 
@@ -605,6 +640,8 @@ ParamPropGroupOpen                              : cstring : "OfxParamPropGroupOp
 ParamPropEnabled                                : cstring : "OfxParamPropEnabled"
 ParamPropDataPtr                                : cstring : "OfxParamPropDataPtr"
 ParamPropChoiceOption                           : cstring : "OfxParamPropChoiceOption"
+ParamPropChoiceOrder                            : cstring : "OfxParamPropChoiceOrder"
+ParamPropChoiceEnum                             : cstring : "OfxParamPropChoiceEnum"
 ParamPropMin                                    : cstring : "OfxParamPropMin"
 ParamPropMax                                    : cstring : "OfxParamPropMax"
 ParamPropDisplayMin                             : cstring : "OfxParamPropDisplayMin"
@@ -635,12 +672,12 @@ ParamDoubleTypeXAbsolute                        : cstring : "OfxParamDoubleTypeX
 ParamDoubleTypeYAbsolute                        : cstring : "OfxParamDoubleTypeYAbsolute"
 ParamDoubleTypeXY                               : cstring : "OfxParamDoubleTypeXY"
 ParamDoubleTypeXYAbsolute                       : cstring : "OfxParamDoubleTypeXYAbsolute"
-ParamDoubleTypeNormalisedX                      : cstring : "OfxParamDoubleTypeNormalisedX"
-ParamDoubleTypeNormalisedY                      : cstring : "OfxParamDoubleTypeNormalisedY"
-ParamDoubleTypeNormalisedXAbsolute              : cstring : "OfxParamDoubleTypeNormalisedXAbsolute"
-ParamDoubleTypeNormalisedYAbsolute              : cstring : "OfxParamDoubleTypeNormalisedYAbsolute"
-ParamDoubleTypeNormalisedXY                     : cstring : "OfxParamDoubleTypeNormalisedXY"
-ParamDoubleTypeNormalisedXYAbsolute             : cstring : "OfxParamDoubleTypeNormalisedXYAbsolute"
+ParamDoubleTypeNormalisedX                      : cstring : "OfxParamDoubleTypeNormalisedX"          // DEPRECATED
+ParamDoubleTypeNormalisedY                      : cstring : "OfxParamDoubleTypeNormalisedY"          // DEPRECATED
+ParamDoubleTypeNormalisedXAbsolute              : cstring : "OfxParamDoubleTypeNormalisedXAbsolute"  // DEPRECATED
+ParamDoubleTypeNormalisedYAbsolute              : cstring : "OfxParamDoubleTypeNormalisedYAbsolute"  // DEPRECATED
+ParamDoubleTypeNormalisedXY                     : cstring : "OfxParamDoubleTypeNormalisedXY"         // DEPRECATED
+ParamDoubleTypeNormalisedXYAbsolute             : cstring : "OfxParamDoubleTypeNormalisedXYAbsolute" // DEPRECATED
 
 ParamCoordinatesCanonical                       : cstring : "OfxParamCoordinatesCanonical"
 ParamCoordinatesNormalised                      : cstring : "OfxParamCoordinatesNormalised"
